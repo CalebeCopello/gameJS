@@ -1,0 +1,21 @@
+:root {
+    --red: rgb(176,55,44);
+    --cream: rgb(176,162,135);
+    --grey: rgb(87,75,85);
+    --blue: rgb(23,21,43)
+}
+body {
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    height: 100vh;
+    margin: 0;
+    background-color: var(--cream);
+}
+
+#display {
+    margin-top: 1rem;
+    border: 3px solid var(--red);
+    box-shadow: 5px 5px rgba(0, 0, 0, 0.298);
+    background-color: white;
+}
