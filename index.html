@@ -8,9 +8,14 @@
 </head>
 <body>
     <div id="container">
-        <canvas id="display" width="256" height="240"></canvas>
+        <canvas id="display"></canvas>
+        <div class="displayMenu">
+            <span>Display size:</span><br>
+            <input type="button" value="1x" id="sizeButton" onclick="displaySize(1)"><br>
+            <input type="button" value="2x" id="sizeButton" onclick="displaySize(2)"><br>
+            <input type="button" value="3x" id="sizeButton" onclick="displaySize(3)"><br>
+        </div>
     </div>
 </body>
-<script type="module" src="./js/main.js"></script>
-<script type="module" src="./js/constants.js"></script>
+<script src="./js/main.js"></script>
 </html>

@@ -1,6 +1,13 @@
-import CONSTANTS from './constants.js'
+const CV = document.getElementById('display')
+const CTX = CV.getContext('2d')
 
-document.addEventListener('DOMContentLoaded', () =>{
-    CONSTANTS.CV.width *= 1
-    CONSTANTS.CV.height *= 1
+document.addEventListener('DOMContentLoaded', () => {
+    displaySize()
 })
+
+function displaySize(s=1) {
+    CV.width="256" 
+    CV.height="240"
+    CV.width*=s
+    CV.height*=s
+}

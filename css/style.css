@@ -19,3 +19,8 @@ body {
     box-shadow: 5px 5px rgba(0, 0, 0, 0.298);
     background-color: white;
 }
+.displayMenu {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+}
