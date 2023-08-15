@@ -75,37 +75,29 @@ document.addEventListener('keydown', ({key}) => {
             console.log(`no command for ${key}`)
     }
 })
-document.addEventListener('keyup', ({key}) => {
-    switch (key) {
-        case 'ArrowUp':
-            moveJump(0)
-            console.log('up')
-            break
-        case 'ArrowDown':
+// document.addEventListener('keyup', ({key}) => {
+//     switch (key) {
+//         case 'ArrowUp':
+//             moveJump(0)
+//             console.log('up')
+//             break
+//         case 'ArrowDown':
 
-            break
-        case 'ArrowLeft':
-            moveLeft(0)
-            console.log('up')
-            break
-        case 'ArrowRight':
-            moveRight(0)
-            break
-        default:
-            console.log(`no command for ${key}`)
-    }
-})
+//             break
+//         case 'ArrowLeft':
+//             moveLeft(0)
+//             console.log('up')
+//             break
+//         case 'ArrowRight':
+//             moveRight(0)
+//             break
+//         default:
+//             console.log(`no command for ${key}`)
+//     }
+// })
 
 function moveLeft (n) {
-    console.log(n)
-    if (n=0) {
-        MEGAMAN.velocityX = 0
-        console.log(MEGAMAN.velocityX)
-    } else if (n = 5) {
-        console.log('else')
-        MEGAMAN.velocityX -= n
-        console.log(MEGAMAN.velocityX)
-    }
+    MEGAMAN.velocityX -= n
 }
 
 function moveRight (n) {
