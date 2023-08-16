@@ -125,6 +125,9 @@ function moveJump(n) {
     }
 }
 
+//TODO:scenario
+
+
 //animation
 function animation() {
     requestAnimationFrame(animation)
