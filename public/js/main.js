@@ -58,6 +58,19 @@ class object {
     }
 }
 
+class scenarioBackground {
+    constructor(x,y,c) {
+        this.x = x
+        this.y = y
+        this.c = c
+    }
+    draw() {
+        if(this.c==1){
+            CTX.fillStyle=rgb(0,153,255)
+        }
+    }
+}
+
 const MEGAMAN = new player(50,50,24,24,0,0,1)
 const RECT = new object(160,180,48,16)
 
@@ -126,6 +139,21 @@ function moveJump(n) {
 }
 
 //TODO:scenario
+async function loadScenario() {
+    try { 
+        const data = await fetch('../src/default.json');
+        if (!data.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const scenario = await data.json();
+        console.log('scenario'+scenario.background[0][0]);
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+loadScenario();
 
 
 //animation
@@ -133,6 +161,6 @@ function animation() {
     requestAnimationFrame(animation)
     CTX.clearRect(0,0,CV.width,CV.height)
     MEGAMAN.update()
-    RECT.draw()
+    //RECT.draw()
 }
 animation()
