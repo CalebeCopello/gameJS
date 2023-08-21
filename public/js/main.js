@@ -14,9 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 })
 
+
 //classes
 class player {
-    constructor(posX,posY,width,height,velocityX,velocityY,aceleration,jump=false,rEdge=false,lEdge=false) {
+    constructor(posX,posY,width,height,velocityX,velocityY,aceleration,jump=false,rEdge=false,lEdge=false,steps=0) {
     this.posX = posX
     this.posY = posY
     this.width = width
@@ -27,6 +28,7 @@ class player {
     this.jump = jump
     this.rEdge = rEdge
     this.lEdge = lEdge
+    this.steps = this.posX
     }
     draw() {
         CTX.fillStyle = 'blue'
@@ -35,6 +37,7 @@ class player {
     update() {
         this.draw()
         this.posX += this.velocityX
+        this.steps += this.velocityX
         this.posY += this.velocityY
         if (this.posY+this.height+this.velocityY <=CV.height) {
             this.velocityY += GRAVITY
@@ -42,14 +45,13 @@ class player {
             this.velocityY = 0
             this.jump = false
         }
-        if (this.posX >= 256 - this.width ) {
+        if (this.posX >= 200 - this.width ) {
             this.velocityX = 0
             this.rEdge = true
-            console.log('next scene')
         } else {
             this.rEdge = false
         }
-        if (this.posX <= 0 ) {
+        if (this.posX <= 56 && this.steps > 0) {
             this.velocityX = 0
             this.lEdge = true
         } else {
@@ -72,8 +74,8 @@ class object {
     }
 }
 
-const MEGAMAN = new player(50,190,24,24,0,0,1)
-const PLAT = new object(160,150,48,16)
+const MEGAMAN = new player(120,190,24,24,0,0,1)
+const PLAT = new object(180,150,48,16)
 
 //functions
 function displaySize(s=1) {
@@ -87,6 +89,10 @@ function displaySize(s=1) {
 }
 
 //player movement
+move = {
+    'right': false,
+    'left': false
+}
 document.addEventListener('keydown', ({key}) => {
     switch (key) {
         case 'ArrowUp':
@@ -97,9 +103,11 @@ document.addEventListener('keydown', ({key}) => {
             break
         case 'ArrowLeft':
             moveLeft(-3)
+            move.left = true
             break
         case 'ArrowRight':
-                moveRight(+3)            
+            moveRight(+3)
+            move.right = true            
             break
         default:
             console.log(`no command for ${key}`)
@@ -114,10 +122,11 @@ document.addEventListener('keyup', ({key}) => {
             break
         case 'ArrowLeft':
             moveLeft(0)
+            move.left = false
             break
         case 'ArrowRight':
             moveRight(0)
-            MEGAMAN.rEdge = false
+            move.right = false
             break
         default:
             console.log(`no command for ${key}`)
@@ -167,9 +176,19 @@ function animation() {
     CTX.clearRect(0,0,CV.width,CV.height)
     MEGAMAN.update()
     PLAT.draw()
+    console.log(MEGAMAN.steps)
+    if (move.right && MEGAMAN.rEdge) {
+        PLAT.posX -= 3
+        MEGAMAN.steps += 3
+    }
+    if (move.left && MEGAMAN.lEdge && MEGAMAN.steps > 0) {
+        console.log(MEGAMAN.posX)
+        PLAT.posX += 3
+        MEGAMAN.steps -= 3
+    }
     //collision
-    if (MEGAMAN.posY <= PLAT.posY + PLAT.height && MEGAMAN.posY + MEGAMAN.velocityY >= PLAT.posY &&  MEGAMAN.posX + MEGAMAN.width >= PLAT.posX && MEGAMAN.posX <= PLAT.posX+PLAT.width) {
-        MEGAMAN.velocityY = 5
+    if (MEGAMAN.posY <= PLAT.posY + PLAT.height && MEGAMAN.posY + MEGAMAN.velocityY >= PLAT.posY &&  MEGAMAN.posX + MEGAMAN.width >= PLAT.posX && MEGAMAN.posX <= PLAT.posX + PLAT.width) {
+        MEGAMAN.velocityY = 1
     } 
     if (MEGAMAN.posY + MEGAMAN.height <= PLAT.posY && MEGAMAN.posY + MEGAMAN.height + MEGAMAN.velocityY >= PLAT.posY && MEGAMAN.posX + MEGAMAN.width >= PLAT.posX && MEGAMAN.posX <= PLAT.posX+PLAT.width) {
         MEGAMAN.velocityY = 0
