@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //classes
 class player {
-    constructor(posX,posY,width,height,velocityX,velocityY,aceleration,jump=false) {
+    constructor(posX,posY,width,height,velocityX,velocityY,aceleration,jump=false,rEdge=false,lEdge=false) {
     this.posX = posX
     this.posY = posY
     this.width = width
@@ -25,6 +25,8 @@ class player {
     this.velocityY = velocityY
     this.aceleration = aceleration
     this.jump = jump
+    this.rEdge = rEdge
+    this.lEdge = lEdge
     }
     draw() {
         CTX.fillStyle = 'blue'
@@ -39,6 +41,19 @@ class player {
         } else { 
             this.velocityY = 0
             this.jump = false
+        }
+        if (this.posX >= 256 - this.width ) {
+            this.velocityX = 0
+            this.rEdge = true
+            console.log('next scene')
+        } else {
+            this.rEdge = false
+        }
+        if (this.posX <= 0 ) {
+            this.velocityX = 0
+            this.lEdge = true
+        } else {
+            this.lEdge = false
         }
     }
 }
@@ -84,7 +99,7 @@ document.addEventListener('keydown', ({key}) => {
             moveLeft(-3)
             break
         case 'ArrowRight':
-            moveRight(+3)
+                moveRight(+3)            
             break
         default:
             console.log(`no command for ${key}`)
@@ -102,6 +117,7 @@ document.addEventListener('keyup', ({key}) => {
             break
         case 'ArrowRight':
             moveRight(0)
+            MEGAMAN.rEdge = false
             break
         default:
             console.log(`no command for ${key}`)
@@ -109,11 +125,15 @@ document.addEventListener('keyup', ({key}) => {
 })
 
 function moveLeft (n) {
-    MEGAMAN.velocityX = n
+    if(!MEGAMAN.lEdge) {
+        MEGAMAN.velocityX = n
+    }
 }
 
 function moveRight (n) {
-    MEGAMAN.velocityX = n
+    if(!MEGAMAN.rEdge) {
+        MEGAMAN.velocityX = n
+    }
 }
 
 function moveJump(n) {
@@ -147,10 +167,9 @@ function animation() {
     CTX.clearRect(0,0,CV.width,CV.height)
     MEGAMAN.update()
     PLAT.draw()
-    //colision
+    //collision
     if (MEGAMAN.posY <= PLAT.posY + PLAT.height && MEGAMAN.posY + MEGAMAN.velocityY >= PLAT.posY &&  MEGAMAN.posX + MEGAMAN.width >= PLAT.posX && MEGAMAN.posX <= PLAT.posX+PLAT.width) {
         MEGAMAN.velocityY = 5
-        MEGAMAN.jump = false
     } 
     if (MEGAMAN.posY + MEGAMAN.height <= PLAT.posY && MEGAMAN.posY + MEGAMAN.height + MEGAMAN.velocityY >= PLAT.posY && MEGAMAN.posX + MEGAMAN.width >= PLAT.posX && MEGAMAN.posX <= PLAT.posX+PLAT.width) {
         MEGAMAN.velocityY = 0
