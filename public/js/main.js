@@ -29,7 +29,6 @@ class player {
     draw() {
         CTX.fillStyle = 'blue'
         CTX.fillRect(this.posX,this.posY,this.width,this.height)
-        console.log(this.velocityY)
     }
     update() {
         this.draw()
@@ -58,21 +57,8 @@ class object {
     }
 }
 
-class scenarioBackground {
-    constructor(x,y,c) {
-        this.x = x
-        this.y = y
-        this.c = c
-    }
-    draw() {
-        if(this.c==1){
-            CTX.fillStyle=rgb(0,153,255)
-        }
-    }
-}
-
-const MEGAMAN = new player(50,50,24,24,0,0,1)
-const RECT = new object(160,180,48,16)
+const MEGAMAN = new player(50,190,24,24,0,0,1)
+const PLAT = new object(160,150,48,16)
 
 //functions
 function displaySize(s=1) {
@@ -89,14 +75,13 @@ function displaySize(s=1) {
 document.addEventListener('keydown', ({key}) => {
     switch (key) {
         case 'ArrowUp':
-            moveJump(-7)
+            moveJump(-10)
             break
         case 'ArrowDown':
             console.log('down')
             break
         case 'ArrowLeft':
             moveLeft(-3)
-            console.log('down')
             break
         case 'ArrowRight':
             moveRight(+3)
@@ -133,8 +118,8 @@ function moveRight (n) {
 
 function moveJump(n) {
     if(!MEGAMAN.jump) {
-    MEGAMAN.velocityY = n
-    MEGAMAN.jump = true
+        MEGAMAN.velocityY = n
+        MEGAMAN.jump = true
     }
 }
 
@@ -153,7 +138,7 @@ async function loadScenario() {
     }
 }
 
-loadScenario();
+// loadScenario();
 
 
 //animation
@@ -161,6 +146,26 @@ function animation() {
     requestAnimationFrame(animation)
     CTX.clearRect(0,0,CV.width,CV.height)
     MEGAMAN.update()
-    //RECT.draw()
+    PLAT.draw()
+    //colision
+    if (MEGAMAN.posY <= PLAT.posY + PLAT.height && MEGAMAN.posY + MEGAMAN.velocityY >= PLAT.posY &&  MEGAMAN.posX + MEGAMAN.width >= PLAT.posX && MEGAMAN.posX <= PLAT.posX+PLAT.width) {
+        MEGAMAN.velocityY = 5
+        MEGAMAN.jump = false
+    } 
+    if (MEGAMAN.posY + MEGAMAN.height <= PLAT.posY && MEGAMAN.posY + MEGAMAN.height + MEGAMAN.velocityY >= PLAT.posY && MEGAMAN.posX + MEGAMAN.width >= PLAT.posX && MEGAMAN.posX <= PLAT.posX+PLAT.width) {
+        MEGAMAN.velocityY = 0
+        MEGAMAN.jump = false
+    }
 }
 animation()
+
+CV.addEventListener('mousemove',mouseLog)
+function mouseLog(event){
+    console.log(event.offsetX)
+    console.log(event.offsetY)
+}
+// CV.addEventListener('mousedown',testeLog)
+// function testeLog() {
+//     console.log(MEGAMAN.posY)
+//     console.log(PLAT.posY + PLAT.height)
+// }
