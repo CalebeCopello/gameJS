@@ -48,18 +48,16 @@ class player {
             this.velocityY = 0
             this.jump = true
         }
-        // if (this.posX >= 200 - this.width) {
-        //     this.velocityX = 0
-        //     this.rEdge = true
-        // } else {
-        //     this.rEdge = false
-        // }
-        // if (this.posX <= 0) {
-        //     this.velocityX = 0
-        //     this.lEdge = true
-        // } else {
-        //     this.lEdge = false
-        // }
+        if (this.posX >= 200 - this.width) {
+            this.rEdge = true
+        } else {
+            this.rEdge = false
+        }
+        if (this.posX <= 0) {
+            this.lEdge = true
+        } else {
+            this.lEdge = false
+        }
     }
 }
 
@@ -164,17 +162,34 @@ async function loadScenario() {
 //animation
 function animation() {
     requestAnimationFrame(animation)
-    CTX.clearRect(0,0,CV.width,CV.height)
-    MEGAMAN.update()
-    PLATS.forEach(PLAT => {
-        PLAT.draw()
-    })
-    if (KEYS.right && !KEYS.left) {
-        MEGAMAN.velocityX = +3
-    } else if (KEYS.left && !KEYS.right) {
-        MEGAMAN.velocityX = -3
+    console.log(MEGAMAN.steps)
+    if (MEGAMAN.steps >= 0) {
+        if (KEYS.right && !KEYS.left) {
+            MEGAMAN.velocityX = +3
+            MEGAMAN.steps +=3
+            if(MEGAMAN.rEdge) {
+                PLATS.forEach((PLAT) => {
+                    MEGAMAN.velocityX = 0
+                    PLAT.posX -= 3
+                })
+            }
+        } else if (KEYS.left && !KEYS.right) {
+            MEGAMAN.velocityX = -3
+            MEGAMAN.steps -= 3
+            if(MEGAMAN.lEdge) {
+                PLATS.forEach((PLAT) => {
+                    MEGAMAN.velocityX = 0
+                    PLAT.posX += 3
+                })
+            }
+        } else {
+            MEGAMAN.velocityX = 0
+        }
     } else {
-        MEGAMAN.velocityX = 0
+        if (KEYS.right && !KEYS.left) {
+            MEGAMAN.velocityX = +3
+            MEGAMAN.steps +=3
+        }
     }
     if (KEYS.up && MEGAMAN.jump) {
         MEGAMAN.velocityY = -10
@@ -202,10 +217,8 @@ function animation() {
             if (overlapX > overlapY) {
                 if (MEGAMAN.posY < PLAT.posY) {
                     // console.log('Hit bottom side');
-
                 } else {
                     // console.log('Hit top side');
-
                 }
             } else {
                 if (MEGAMAN.posX < PLAT.posX) {
@@ -216,6 +229,11 @@ function animation() {
                 }
             }
             }
+    })
+    CTX.clearRect(0,0,CV.width,CV.height)
+    MEGAMAN.update()
+    PLATS.forEach(PLAT => {
+        PLAT.draw()
     })
 }
 animation()
