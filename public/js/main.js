@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //classes
 class player {
-    constructor(posX,posY,width,height,velocityX,velocityY,aceleration,jump=false,rEdge=false,lEdge=false,steps=0) {
+    constructor(posX,posY,width,height,velocityX,velocityY,aceleration,jump=false,rEdge=false,lEdge=false,steps=0,moveLeft=true,moveRight=true) {
     this.posX = posX
     this.posY = posY
     this.width = width
@@ -30,6 +30,8 @@ class player {
     this.rEdge = rEdge
     this.lEdge = lEdge
     this.steps = this.posX
+    this.moveLeft = moveLeft
+    this.moveRight = moveRight
     }
     draw() {
         CTX.fillStyle = 'blue'
@@ -46,7 +48,7 @@ class player {
             this.velocityY = 0
             this.jump = false
         }
-        if (this.posX >= 200 - this.width ) {
+        if (this.posX >= 200 - this.width) {
             this.velocityX = 0
             this.rEdge = true
         } else {
@@ -76,7 +78,7 @@ class object {
 }
 
 const MEGAMAN = new player(120,190,24,24,0,0,1)
-const PLATS = [new object(180,150,48,16), new object(280,100,48,16), new object(380,150,48,16)]
+const PLATS = [new object(180,150,48,16), new object(280,100,48,16), new object(380,150,48,16), new object(480,200,48,16)]
 
 //functions
 function displaySize(s=1) {
@@ -88,27 +90,29 @@ function displaySize(s=1) {
     localStorage.setItem('displaySize',s)
     MEGAMAN.draw()
 }
-
-//player movement
-move = {
-    'right': false,
-    'left': false
+const KEYS = {
+    up: false,
+    down: false,
+    right: false,
+    left: false
 }
 document.addEventListener('keydown', ({key}) => {
     switch (key) {
         case 'ArrowUp':
-            moveJump(-10)
+            MEGAMAN.jump = false
+            KEYS.up = true
             break
         case 'ArrowDown':
-            console.log('down')
+            MEGAMAN.jump = true
+            KEYS.down = true
             break
         case 'ArrowLeft':
-            moveLeft(-3)
-            move.left = true
+            MEGAMAN.moveLeft = false
+            KEYS.left = true
             break
         case 'ArrowRight':
-            moveRight(+3)
-            move.right = true            
+            MEGAMAN.moveRight = false
+            KEYS.right = true
             break
         default:
             console.log(`no command for ${key}`)
@@ -117,41 +121,45 @@ document.addEventListener('keydown', ({key}) => {
 document.addEventListener('keyup', ({key}) => {
     switch (key) {
         case 'ArrowUp':
-            moveJump(0)
+            if(MEGAMAN.velocityY==0) {
+                MEGAMAN.jump = true
+                KEYS.up = false
+            }
             break
         case 'ArrowDown':
+            KEYS.down = false
             break
         case 'ArrowLeft':
-            moveLeft(0)
-            move.left = false
+            MEGAMAN.moveLeft = true
+            KEYS.left = false
             break
         case 'ArrowRight':
-            moveRight(0)
-            move.right = false
+            MEGAMAN.moveRight = true
+            KEYS.right = false
             break
         default:
             console.log(`no command for ${key}`)
     }
 })
 
-function moveLeft (n) {
-    if(!MEGAMAN.lEdge) {
-        MEGAMAN.velocityX = n
-    }
-}
+// function moveLeft (n) {
+//     if(!MEGAMAN.lEdge) {
+//         MEGAMAN.velocityX = n
+//     }
+// }
 
-function moveRight (n) {
-    if(!MEGAMAN.rEdge) {
-        MEGAMAN.velocityX = n
-    }
-}
+// function moveRight (n) {
+//     if(!MEGAMAN.rEdge) {
+//         MEGAMAN.velocityX = n
+//     }
+// }
 
-function moveJump(n) {
-    if(!MEGAMAN.jump) {
-        MEGAMAN.velocityY = n
-        MEGAMAN.jump = true
-    }
-}
+// function moveJump(n) {
+//     if(!MEGAMAN.jump) {
+//         MEGAMAN.velocityY = n
+//         MEGAMAN.jump = true
+//     }
+// }
 
 //TODO:scenario
 async function loadScenario() {
@@ -179,29 +187,60 @@ function animation() {
     PLATS.forEach(PLAT => {
         PLAT.draw()
     })
-    if (move.right && MEGAMAN.rEdge) {
+    if (MEGAMAN.moveRight && MEGAMAN.rEdge) {
         PLATS.forEach((PLAT) => {
             PLAT.posX -= 3
         })
         MEGAMAN.steps += 3
     }
-    if (move.left && MEGAMAN.lEdge && MEGAMAN.steps > 0) {
+    if (MEGAMAN.moveLeft && MEGAMAN.lEdge && MEGAMAN.steps > 0) {
         console.log(MEGAMAN.posX)
         PLATS.forEach((PLAT) => {
             PLAT.posX += 3
         })
         MEGAMAN.steps -= 3
     }
+    if (KEYS.right) {
+        MEGAMAN.velocityX = +3
+    } else {
+        MEGAMAN.velocityX = 0
+    }
     //collision
-    //FIXME:correct collision on x asix 
     PLATS.forEach((PLAT) => {
-        if (MEGAMAN.posY <= PLAT.posY + PLAT.height && MEGAMAN.posY + MEGAMAN.velocityY >= PLAT.posY &&  MEGAMAN.posX + MEGAMAN.width >= PLAT.posX && MEGAMAN.posX <= PLAT.posX + PLAT.width) {
-            MEGAMAN.velocityY = 1
-        } 
-        if (MEGAMAN.posY + MEGAMAN.height <= PLAT.posY && MEGAMAN.posY + MEGAMAN.height + MEGAMAN.velocityY >= PLAT.posY && MEGAMAN.posX + MEGAMAN.width >= PLAT.posX && MEGAMAN.posX <= PLAT.posX+PLAT.width) {
-            MEGAMAN.velocityY = 0
-            MEGAMAN.jump = false
-        }
+        //old
+        // if (MEGAMAN.posY <= PLAT.posY + PLAT.height && MEGAMAN.posY + MEGAMAN.velocityY >= PLAT.posY &&  MEGAMAN.posX + MEGAMAN.width >= PLAT.posX && MEGAMAN.posX <= PLAT.posX + PLAT.width) {
+        //     MEGAMAN.velocityY = 1
+        // } 
+        // if (MEGAMAN.posY + MEGAMAN.height <= PLAT.posY && MEGAMAN.posY + MEGAMAN.height + MEGAMAN.velocityY >= PLAT.posY && MEGAMAN.posX + MEGAMAN.width >= PLAT.posX && MEGAMAN.posX <= PLAT.posX+PLAT.width) {
+        //     MEGAMAN.velocityY = 0
+        //     MEGAMAN.jump = false
+            if (
+                MEGAMAN.posX + MEGAMAN.width >= PLAT.posX &&
+                MEGAMAN.posX <= PLAT.posX + PLAT.width &&
+                MEGAMAN.posY + MEGAMAN.height >= PLAT.posY &&
+                MEGAMAN.posY <= PLAT.posY + PLAT.height
+            ) {
+            // Check collision side
+            const overlapX = Math.min(MEGAMAN.posX + MEGAMAN.width, PLAT.posX + PLAT.width) - Math.max(MEGAMAN.posX, PLAT.posX);
+            const overlapY = Math.min(MEGAMAN.posY + MEGAMAN.height, PLAT.posY + PLAT.height) - Math.max(MEGAMAN.posY, PLAT.posY);
+            if (overlapX > overlapY) {
+                if (MEGAMAN.posY < PLAT.posY) {
+                    // console.log('Hit bottom side');
+                    MEGAMAN.velocityY = 0
+                    MEGAMAN.jump = false
+                } else {
+                    // console.log('Hit top side');
+                    MEGAMAN.velocityY = 1
+                }
+            } else {
+                if (MEGAMAN.posX < PLAT.posX) {
+                    // console.log('Hit right side');
+
+                } else {
+                    // console.log('Hit left side');
+                }
+            }
+            }
     })
 }
 animation()

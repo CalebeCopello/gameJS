@@ -56,12 +56,34 @@
         RRECT.posY = mouse.y
         RRECT.draw()
         BRECT.draw()
-
-        if(RRECT.posX+RRECT.width >= BRECT.posX && RRECT.posX <= BRECT.posX+BRECT.width && RRECT.posY + RRECT.height >= BRECT.posY && RRECT.posY <= BRECT.posY+BRECT.height) {
-            console.log('hit')
-        }
-
-
+        // old version of collision
+        // if(RRECT.posX+RRECT.width >= BRECT.posX && RRECT.posX <= BRECT.posX+BRECT.width && RRECT.posY + RRECT.height >= BRECT.posY && RRECT.posY <= BRECT.posY+BRECT.height) {
+        //     console.log('hit')
+        // }
+        if (
+            RRECT.posX + RRECT.width >= BRECT.posX &&
+            RRECT.posX <= BRECT.posX + BRECT.width &&
+            RRECT.posY + RRECT.height >= BRECT.posY &&
+            RRECT.posY <= BRECT.posY + BRECT.height
+        ) {
+                // Check collision side
+                const overlapX = Math.min(RRECT.posX + RRECT.width, BRECT.posX + BRECT.width) - Math.max(RRECT.posX, BRECT.posX);
+                const overlapY = Math.min(RRECT.posY + RRECT.height, BRECT.posY + BRECT.height) - Math.max(RRECT.posY, BRECT.posY);
+                console.log('overlapX: ' + overlapX + '\noverlapY: '+overlapY)
+                if (overlapX > overlapY) {
+                    if (RRECT.posY < BRECT.posY) {
+                        console.log('Hit bottom side');
+                    } else {
+                        console.log('Hit top side');
+                    }
+                } else {
+                    if (RRECT.posX < BRECT.posX) {
+                        console.log('Hit right side');
+                    } else {
+                        console.log('Hit left side');
+                    }
+                }
+            }
         }
 
     animate()
