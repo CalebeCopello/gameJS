@@ -2,7 +2,7 @@
 const DISPLAYSIZE = localStorage.getItem('displaySize')
 const CV = document.getElementById('display')
 const CTX = CV.getContext('2d')
-const GRAVITY = 1
+const GRAVITY = 0.5
 
 
 //load
@@ -53,7 +53,7 @@ class player {
         } else {
             this.rEdge = false
         }
-        if (this.posX <= 0) {
+        if (this.posX <= 30) {
             this.lEdge = true
         } else {
             this.lEdge = false
@@ -162,6 +162,12 @@ async function loadScenario() {
 //animation
 function animation() {
     requestAnimationFrame(animation)
+    CTX.clearRect(0,0,CV.width,CV.height)
+    MEGAMAN.update()
+    console.log(MEGAMAN.steps)
+    PLATS.forEach(PLAT => {
+        PLAT.draw()
+    })
     if (MEGAMAN.steps >= 0) {
         if (KEYS.right && !KEYS.left) {
             MEGAMAN.velocityX = +3
@@ -185,33 +191,32 @@ function animation() {
             MEGAMAN.velocityX = 0
         }
     } else {
-        if (KEYS.right && !KEYS.left) {
-            MEGAMAN.velocityX = +3
-            MEGAMAN.steps +=3
-        }
+        MEGAMAN.velocityX = 0
     }
     if (KEYS.up && MEGAMAN.jump) {
-        MEGAMAN.velocityY = -15
+        MEGAMAN.velocityY = -10
         MEGAMAN.jump = false
     }
-
     //collision
     PLATS.forEach((PLAT) => {
             if (
                 MEGAMAN.posX + MEGAMAN.width >= PLAT.posX &&
                 MEGAMAN.posX <= PLAT.posX + PLAT.width &&
-                MEGAMAN.posY + MEGAMAN.height >= PLAT.posY &&
-                MEGAMAN.posY <= PLAT.posY + PLAT.height
+                MEGAMAN.posY + MEGAMAN.height + MEGAMAN.velocityY >= PLAT.posY &&
+                MEGAMAN.posY + MEGAMAN.velocityY <= PLAT.posY + PLAT.height
             ) {
             // Check collision side
             const overlapX = Math.min(MEGAMAN.posX + MEGAMAN.width, PLAT.posX + PLAT.width) - Math.max(MEGAMAN.posX, PLAT.posX);
-            const overlapY = Math.min(MEGAMAN.posY + MEGAMAN.height, PLAT.posY + PLAT.height) - Math.max(MEGAMAN.posY, PLAT.posY);
+            const overlapY = Math.min(MEGAMAN.posY + MEGAMAN.height , PLAT.posY + PLAT.height) - Math.max(MEGAMAN.posY, PLAT.posY);
             if (overlapX > overlapY) {
                 if (MEGAMAN.posY < PLAT.posY) {
                     // console.log('Hit bottom side');
+                    MEGAMAN.velocityY = 0
+                    MEGAMAN.jump = true
                 } else {
-                    // console.log('Hit top side');
-                    MEGAMAN.velocityY = +3
+                    console.log('Hit top side\nMEGAMAN.posY: ' + MEGAMAN.posY + 'PLAT.posY: ' + PLAT.posY);
+                    MEGAMAN.posY = PLAT.posY + PLAT.height
+                    MEGAMAN.velocityY = 0
                 }
             } else {
                 if (MEGAMAN.posX < PLAT.posX) {
@@ -224,12 +229,6 @@ function animation() {
                 }
             }
             }
-    })
-    console.log('MEGAMAN.jump: ' + MEGAMAN.jump + '\nKEYS.up: ' + KEYS.up + '\nMEGAMAN.velocityY: ' + MEGAMAN.velocityY)
-    CTX.clearRect(0,0,CV.width,CV.height)
-    MEGAMAN.update()
-    PLATS.forEach(PLAT => {
-        PLAT.draw()
     })
 }
 animation()
