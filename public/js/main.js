@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //classes
 class player {
-    constructor(posX,posY,width,height,velocityX,velocityY,aceleration,jump=false,rEdge=false,lEdge=false,steps=0,moveLeft=true,moveRight=true) {
+    constructor(posX,posY,width,height,velocityX,velocityY,aceleration,jump=true,rEdge=false,lEdge=false,steps=0,moveLeft=true,moveRight=true) {
     this.posX = posX
     this.posY = posY
     this.width = width
@@ -42,24 +42,24 @@ class player {
         this.posX += this.velocityX
         this.steps += this.velocityX
         this.posY += this.velocityY
-        if (this.posY+this.height+this.velocityY <=CV.height) {
+        if (this.posY+this.height+this.velocityY <= CV.height) {
             this.velocityY += GRAVITY
         } else { 
             this.velocityY = 0
-            this.jump = false
+            this.jump = true
         }
-        if (this.posX >= 200 - this.width) {
-            this.velocityX = 0
-            this.rEdge = true
-        } else {
-            this.rEdge = false
-        }
-        if (this.posX <= 0) {
-            this.velocityX = 0
-            this.lEdge = true
-        } else {
-            this.lEdge = false
-        }
+        // if (this.posX >= 200 - this.width) {
+        //     this.velocityX = 0
+        //     this.rEdge = true
+        // } else {
+        //     this.rEdge = false
+        // }
+        // if (this.posX <= 0) {
+        //     this.velocityX = 0
+        //     this.lEdge = true
+        // } else {
+        //     this.lEdge = false
+        // }
     }
 }
 
@@ -77,7 +77,7 @@ class object {
     }
 }
 
-const MEGAMAN = new player(120,190,24,24,0,0,1)
+const MEGAMAN = new player(50,80,24,24,0,0,1)
 const PLATS = [new object(180,150,48,16), new object(280,100,48,16), new object(380,150,48,16), new object(480,200,48,16)]
 
 //functions
@@ -99,8 +99,9 @@ const KEYS = {
 document.addEventListener('keydown', ({key}) => {
     switch (key) {
         case 'ArrowUp':
-            MEGAMAN.jump = false
+            if(MEGAMAN.jump && MEGAMAN.velocityY==0) {
             KEYS.up = true
+            }
             break
         case 'ArrowDown':
             MEGAMAN.jump = true
@@ -121,10 +122,10 @@ document.addEventListener('keydown', ({key}) => {
 document.addEventListener('keyup', ({key}) => {
     switch (key) {
         case 'ArrowUp':
-            if(MEGAMAN.velocityY==0) {
-                MEGAMAN.jump = true
-                KEYS.up = false
+            if(MEGAMAN.velocityY<=0) {
+            MEGAMAN.velocityY = 0
             }
+            KEYS.up = false
             break
         case 'ArrowDown':
             KEYS.down = false
@@ -141,25 +142,6 @@ document.addEventListener('keyup', ({key}) => {
             console.log(`no command for ${key}`)
     }
 })
-
-// function moveLeft (n) {
-//     if(!MEGAMAN.lEdge) {
-//         MEGAMAN.velocityX = n
-//     }
-// }
-
-// function moveRight (n) {
-//     if(!MEGAMAN.rEdge) {
-//         MEGAMAN.velocityX = n
-//     }
-// }
-
-// function moveJump(n) {
-//     if(!MEGAMAN.jump) {
-//         MEGAMAN.velocityY = n
-//         MEGAMAN.jump = true
-//     }
-// }
 
 //TODO:scenario
 async function loadScenario() {
@@ -187,24 +169,18 @@ function animation() {
     PLATS.forEach(PLAT => {
         PLAT.draw()
     })
-    if (MEGAMAN.moveRight && MEGAMAN.rEdge) {
-        PLATS.forEach((PLAT) => {
-            PLAT.posX -= 3
-        })
-        MEGAMAN.steps += 3
-    }
-    if (MEGAMAN.moveLeft && MEGAMAN.lEdge && MEGAMAN.steps > 0) {
-        console.log(MEGAMAN.posX)
-        PLATS.forEach((PLAT) => {
-            PLAT.posX += 3
-        })
-        MEGAMAN.steps -= 3
-    }
-    if (KEYS.right) {
+    if (KEYS.right && !KEYS.left) {
         MEGAMAN.velocityX = +3
+    } else if (KEYS.left && !KEYS.right) {
+        MEGAMAN.velocityX = -3
     } else {
         MEGAMAN.velocityX = 0
     }
+    if (KEYS.up && MEGAMAN.jump) {
+        MEGAMAN.velocityY = -10
+        MEGAMAN.jump = false
+    }
+
     //collision
     PLATS.forEach((PLAT) => {
         //old
@@ -226,11 +202,10 @@ function animation() {
             if (overlapX > overlapY) {
                 if (MEGAMAN.posY < PLAT.posY) {
                     // console.log('Hit bottom side');
-                    MEGAMAN.velocityY = 0
-                    MEGAMAN.jump = false
+
                 } else {
                     // console.log('Hit top side');
-                    MEGAMAN.velocityY = 1
+
                 }
             } else {
                 if (MEGAMAN.posX < PLAT.posX) {
