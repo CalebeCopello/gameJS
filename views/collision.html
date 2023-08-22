@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collision</title>
+    <style>
+        body{
+            margin: 0;
+            background-color: gray;
+        }
+        #canvas{
+            display: flex;
+            background-color: white;
+            border: 3px solid black
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" height="600" width="1000"></canvas>
+</body>
+<script>
+    const CV = document.getElementById("canvas")
+    const CTX = CV.getContext('2d')
+
+    const mouse = {}
+    class RECT {
+        constructor(posX,posY,width,height,c) {
+            this.posX = posX
+            this.posY = posY
+            this.width = width
+            this.height = height
+            this.c = c
+        }
+        draw() {
+            CTX.fillStyle = this.c
+            CTX.fillRect(this.posX,this.posY,this.width,this.height)
+        }
+    }
+
+    const RRECT = new RECT(mouse.x, mouse.y,100,100,'#E86262')
+    const BRECT = new RECT(CV.width/2 - 50, CV.height/2-50,100,100,'#92ABEA')
+    RRECT.draw()
+    BRECT.draw()
+
+    addEventListener('mousemove', (e) =>{
+        mouse.x = e.clientX - 50
+        mouse.y = e.clientY - 50
+    })
+
+    function animate() {
+        requestAnimationFrame(animate)
+        CTX.fillStyle = '#1A1A23'
+        CTX.fillRect(0,0,CV.width,CV.height)
+        RRECT.posX = mouse.x
+        RRECT.posY = mouse.y
+        RRECT.draw()
+        BRECT.draw()
+
+        if(RRECT.posX+RRECT.width >= BRECT.posX && RRECT.posX <= BRECT.posX+BRECT.width && RRECT.posY + RRECT.height >= BRECT.posY && RRECT.posY <= BRECT.posY+BRECT.height) {
+            console.log('hit')
+        }
+
+
+        }
+
+    animate()
+</script>
+</html>
