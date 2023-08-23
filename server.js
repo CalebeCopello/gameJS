@@ -12,3 +12,5 @@ app.get('/', (req, res) => {
 })
 
 app.listen(9080)
+
+console.log('http://localhost:9080/')

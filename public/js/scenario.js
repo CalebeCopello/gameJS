@@ -11,22 +11,22 @@ let cache = {
     base: base,
     foreground: foreground
 }
-for (let i = 0; i <= 32; i++) {
-    background[i] = {}
-    for (let j = 0; j <= 28; j++) {
-        background[i][j] = 1
+for (let x = 0; x <= 15; x++) {
+    background[x] = {}
+    for (let y = 0; y <= 13; y++) {
+        background[x][y] = 0
     }
 }
-for (let i = 0; i <= 32; i++) {
-    base[i] = {}
-    for (let j = 0; j <= 28; j++) {
-        base[i][j] = j == 28 ? 1 : 0
+for (let x = 0; x <= 15; x++) {
+    base[x] = {}
+    for (let y = 0; y <= 13; y++) {
+        base[x][y] = y == 13 ? 1 : 0
     }
 }
-for (let i = 0; i <= 32; i++) {
-    foreground[i] = {}
-    for (let j = 0; j <= 28; j++) {
-        foreground[i][j] = 0
+for (let x = 0; x <= 32; x++) {
+    foreground[x] = {}
+    for (let y = 0; y <= 28; y++) {
+        foreground[x][y] = 0
     }
 }
 fs.writeFileSync(MAP,JSON.stringify(cache))

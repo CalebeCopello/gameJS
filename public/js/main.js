@@ -61,6 +61,21 @@ class player {
     }
 }
 
+const BGIMG = [new Image(), new Image()]
+BGIMG[0].src = '../src/background/0.png'
+BGIMG[1].src = '../src/background/1.png'
+
+class background {
+    constructor(posX,posY,code) {
+        this.posX = posX
+        this.posY = posY
+        this.code = code
+    }
+    draw() {
+            CTX.drawImage(BGIMG[this.code],this.posX,this.posY)
+    }
+}
+
 class object {
     constructor(posX,posY,width,height,damage=false) {
         this.posX = posX
@@ -76,7 +91,8 @@ class object {
 }
 
 const MEGAMAN = new player(50,80,24,24,0,0,1)
-const PLATS = [new object(0,208,256,16), new object(0,0,40,224),new object(180,150,48,16), new object(280,100,48,16), new object(380,150,48,16), new object(480,200,48,16)]
+const PLATS = [new object(180,150,48,16), new object(280,100,48,16), new object(380,150,48,16), new object(480,200,48,16)]
+const BGS = []
 
 //functions
 function displaySize(s=1) {
@@ -149,25 +165,33 @@ async function loadScenario() {
             throw new Error('Network response was not ok');
         }
         const scenario = await data.json();
-        console.log('scenario'+scenario.background[0][0]);
+        for (x = 0; x < Object.keys(scenario.background).length; x++) {
+            for (y = 0; y < Object.keys(scenario.background[x]).length; y++) {
+                BGS.push(new background(x*16,y*16, scenario.background[x][y]))
+            }
+        }
     }
     catch (error) {
         console.log(error);
     }
 }
 
-// loadScenario();
+loadScenario();
 
 
 //animation
 function animation() {
     requestAnimationFrame(animation)
     CTX.clearRect(0,0,CV.width,CV.height)
+    
+    BGS.forEach(BG =>{
+        BG.draw()
+    })
     MEGAMAN.update()
     PLATS.forEach(PLAT => {
         PLAT.draw()
     })
-    console.log(MEGAMAN.steps)
+    // console.log(MEGAMAN.steps)
     //FIXME:movement to the left
     if (MEGAMAN.steps >= 0) {
         if (KEYS.right && !KEYS.left) {
@@ -215,6 +239,7 @@ function animation() {
                     MEGAMAN.velocityY = 0
                     MEGAMAN.jump = true
                 } else {
+                    //console.log('Hit top side')
                     MEGAMAN.posY = PLAT.posY + PLAT.height
                     MEGAMAN.velocityY = 0
                 }
