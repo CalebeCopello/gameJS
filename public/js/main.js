@@ -53,7 +53,7 @@ class player {
         } else {
             this.rEdge = false
         }
-        if (this.posX <= 30) {
+        if (this.posX <= 36) {
             this.lEdge = true
         } else {
             this.lEdge = false
@@ -76,7 +76,7 @@ class object {
 }
 
 const MEGAMAN = new player(50,80,24,24,0,0,1)
-const PLATS = [new object(180,150,48,16), new object(280,100,48,16), new object(380,150,48,16), new object(480,200,48,16)]
+const PLATS = [new object(0,208,256,16), new object(0,0,40,224),new object(180,150,48,16), new object(280,100,48,16), new object(380,150,48,16), new object(480,200,48,16)]
 
 //functions
 function displaySize(s=1) {
@@ -164,27 +164,28 @@ function animation() {
     requestAnimationFrame(animation)
     CTX.clearRect(0,0,CV.width,CV.height)
     MEGAMAN.update()
-    console.log(MEGAMAN.steps)
     PLATS.forEach(PLAT => {
         PLAT.draw()
     })
+    console.log(MEGAMAN.steps)
+    //FIXME:movement to the left
     if (MEGAMAN.steps >= 0) {
         if (KEYS.right && !KEYS.left) {
             MEGAMAN.velocityX = +3
-            MEGAMAN.steps +=3
             if(MEGAMAN.rEdge) {
                 PLATS.forEach((PLAT) => {
                     MEGAMAN.velocityX = 0
                     PLAT.posX -= 3
+                    MEGAMAN.steps +=3
                 })
             }
         } else if (KEYS.left && !KEYS.right) {
             MEGAMAN.velocityX = -3
-            MEGAMAN.steps -= 3
             if(MEGAMAN.lEdge) {
                 PLATS.forEach((PLAT) => {
                     MEGAMAN.velocityX = 0
                     PLAT.posX += 3
+                    MEGAMAN.steps -= 3
                 })
             }
         } else {
@@ -214,7 +215,6 @@ function animation() {
                     MEGAMAN.velocityY = 0
                     MEGAMAN.jump = true
                 } else {
-                    console.log('Hit top side\nMEGAMAN.posY: ' + MEGAMAN.posY + 'PLAT.posY: ' + PLAT.posY);
                     MEGAMAN.posY = PLAT.posY + PLAT.height
                     MEGAMAN.velocityY = 0
                 }
@@ -222,7 +222,6 @@ function animation() {
                 if (MEGAMAN.posX < PLAT.posX) {
                     // console.log('Hit right side');
                     MEGAMAN.velocityX = -1
-
                 } else {
                     // console.log('Hit left side');
                     MEGAMAN.velocityX = +1
