@@ -61,9 +61,14 @@ class player {
     }
 }
 
-const BGIMG = [new Image(), new Image()]
+const BGIMG = [new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image()]
 BGIMG[0].src = '../src/background/0.png'
 BGIMG[1].src = '../src/background/1.png'
+BGIMG[2].src = '../src/background/2.png'
+BGIMG[3].src = '../src/background/3.png'
+BGIMG[4].src = '../src/background/4.png'
+BGIMG[5].src = '../src/background/5.png'
+BGIMG[6].src = '../src/background/6.png'
 
 class background {
     constructor(posX,posY,code) {
@@ -191,7 +196,7 @@ function animation() {
     PLATS.forEach(PLAT => {
         PLAT.draw()
     })
-    // console.log(MEGAMAN.steps)
+    console.log(MEGAMAN.steps)
     //FIXME:movement to the left
     if (MEGAMAN.steps >= 0) {
         if (KEYS.right && !KEYS.left) {
@@ -202,6 +207,9 @@ function animation() {
                     PLAT.posX -= 3
                     MEGAMAN.steps +=3
                 })
+                BGS.forEach((BG) =>{
+                    BG.posX -= 3
+                })
             }
         } else if (KEYS.left && !KEYS.right) {
             MEGAMAN.velocityX = -3
@@ -210,6 +218,9 @@ function animation() {
                     MEGAMAN.velocityX = 0
                     PLAT.posX += 3
                     MEGAMAN.steps -= 3
+                })
+                BGS.forEach((BG) =>{
+                    BG.posX += 3
                 })
             }
         } else {

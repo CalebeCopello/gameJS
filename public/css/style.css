@@ -18,7 +18,7 @@ body {
     border: 3px solid var(--red);
     box-shadow: 5px 5px rgba(0, 0, 0, 0.298);
     /* background-color: rgb(57,198,255); */
-    background-color: rgb(255,255,255);
+    /* background-color: rgb(255,0,255); */
 }
 .displayMenu {
     position: absolute;

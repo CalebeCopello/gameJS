@@ -11,10 +11,41 @@ let cache = {
     base: base,
     foreground: foreground
 }
-for (let x = 0; x <= 15; x++) {
+let randomX, randomY
+let randomTower = false
+for (let x = 0; x <= 56; x++) {
     background[x] = {}
+    if (x%5 == 0 && !randomTower) {
+        randomX = Math.floor(Math.random() * ((x+5) - x + 1)) + x
+        randomY = Math.floor(Math.random() * 10)
+        randomTower = true
+    }
     for (let y = 0; y <= 13; y++) {
-        background[x][y] = 0
+    //     //code for tower
+        if (x === randomX) {
+            if (y === randomY) {
+                background[x][y] = 1
+            } else if (y === randomY+1) {
+                background[x][y] = 3
+            } else if (y > randomY+1) {
+                background[x][y] = 5
+            } else {
+                background[x][y] = 0
+            }
+        } else if (x===randomX+1) {
+            randomTower = false
+            if (y === randomY) {
+                background[x][y] = 2
+            } else if (y === randomY+1) {
+                background[x][y] = 4
+            } else if (y > randomY+1) {
+                background[x][y] = 6
+            } else {
+                background[x][y] = 0
+            }
+        } else {
+            background[x][y] = 0
+        }
     }
 }
 for (let x = 0; x <= 15; x++) {
