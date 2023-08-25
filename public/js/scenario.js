@@ -17,26 +17,26 @@ for (let x = 0; x <= 56; x++) {
     background[x] = {}
     if (x%5 == 0 && !randomTower) {
         randomX = Math.floor(Math.random() * ((x+5) - x + 1)) + x
-        randomY = Math.floor(Math.random() * 10)
+        randomY = Math.floor(Math.random() * (10 - 4)) + 4
         randomTower = true
     }
     for (let y = 0; y <= 13; y++) {
-    //     //code for tower
-        if (x === randomX) {
-            if (y === randomY) {
+    //code for tower 
+        if (x == randomX) {
+            if (y == randomY) {
                 background[x][y] = 1
-            } else if (y === randomY+1) {
+            } else if (y == randomY+1) {
                 background[x][y] = 3
             } else if (y > randomY+1) {
                 background[x][y] = 5
             } else {
                 background[x][y] = 0
             }
-        } else if (x===randomX+1) {
+        } else if (x == randomX+1) {
             randomTower = false
-            if (y === randomY) {
+            if (y == randomY) {
                 background[x][y] = 2
-            } else if (y === randomY+1) {
+            } else if (y == randomY+1) {
                 background[x][y] = 4
             } else if (y > randomY+1) {
                 background[x][y] = 6
@@ -48,10 +48,15 @@ for (let x = 0; x <= 56; x++) {
         }
     }
 }
-for (let x = 0; x <= 15; x++) {
+for (let x = 0; x <= 56; x++) {
     base[x] = {}
     for (let y = 0; y <= 13; y++) {
-        base[x][y] = y == 13 ? 1 : 0
+        if(y == 11) {
+            base[x][y] = 1
+        } else {
+            base[x][y] = 0
+        }
+        // if (x == 2) { base[x][y] = }
     }
 }
 for (let x = 0; x <= 32; x++) {
