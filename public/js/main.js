@@ -73,9 +73,17 @@ BGIMG[4].src = '../src/background/4.png'
 BGIMG[5].src = '../src/background/5.png'
 BGIMG[6].src = '../src/background/6.png'
 
-const BASEIMG = [new Image(), new Image()]
-BASEIMG[1].src = '../src/base/0.png'
 
+const BASEIMG = [new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image()]
+BASEIMG[0].src = '../src/base/0.png'
+BASEIMG[1].src = '../src/base/1.png'
+BASEIMG[2].src = '../src/base/2.png'
+BASEIMG[3].src = '../src/base/3.png'
+BASEIMG[4].src = '../src/base/4.png'
+BASEIMG[5].src = '../src/base/5.png'
+BASEIMG[6].src = '../src/base/6.png'
+BASEIMG[7].src = '../src/base/7.png'
+BASEIMG[8].src = '../src/base/8.png'
 
 class background {
     constructor(posX,posY,code) {
@@ -117,7 +125,7 @@ async function loadScenario() {
         }
         for (x = 0; x < Object.keys(scenario.base).length; x++) {
             for (y = 0; y < Object.keys(scenario.base[x]).length; y++) {
-                if (scenario.base[x][y] != 0) PLATS.push(new object(x*16,y*16, scenario.base[x][y]))
+                if (scenario.base[x][y] != 0) PLATS.push(new object(x*16,y*16, scenario.base[x][y] -1))
                 
             }
         }
@@ -129,7 +137,7 @@ async function loadScenario() {
 
 loadScenario();
 
-const MEGAMAN = new player(50,80,24* DISPLAYSIZE,24* DISPLAYSIZE,0,0,1)
+const MEGAMAN = new player(90,80,24* DISPLAYSIZE,24* DISPLAYSIZE,0,0,1)
 const PLATS = []
 const BGS = []
 
