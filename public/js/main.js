@@ -150,6 +150,8 @@ const KEYS = {
 }
 document.addEventListener('keydown', ({key}) => {
     switch (key) {
+        case 'w':
+        case ' ':
         case 'ArrowUp':
             if(MEGAMAN.jump && MEGAMAN.velocityY == 0 && !KEYS.up) {
                 MEGAMAN.velocityY = -(VELOCITYY)
@@ -157,14 +159,17 @@ document.addEventListener('keydown', ({key}) => {
                 KEYS.up = true
             }
             break
+        case 's':
         case 'ArrowDown':
             MEGAMAN.jump = true
             KEYS.down = true
             break
+        case 'a':
         case 'ArrowLeft':
             MEGAMAN.moveLeft = false
             KEYS.left = true
             break
+        case 'd':
         case 'ArrowRight':
             MEGAMAN.moveRight = false
             KEYS.right = true
@@ -175,20 +180,25 @@ document.addEventListener('keydown', ({key}) => {
 })
 document.addEventListener('keyup', ({key}) => {
     switch (key) {
+        case 'w':
+        case ' ':
         case 'ArrowUp':
             if(MEGAMAN.velocityY<=0) {
             MEGAMAN.velocityY = 0
-            MEGAMAN.jump = true
+            // MEGAMAN.jump = true
             }
             KEYS.up = false
             break
+        case 's':
         case 'ArrowDown':
             KEYS.down = false
             break
+        case 'a':
         case 'ArrowLeft':
             MEGAMAN.moveLeft = true
             KEYS.left = false
             break
+        case 'd':
         case 'ArrowRight':
             MEGAMAN.moveRight = true
             KEYS.right = false
@@ -274,6 +284,5 @@ function animation() {
             }
             }
     })
-    console.log(MEGAMAN.jump)
 }
 animation()
