@@ -3,6 +3,8 @@ const DISPLAYSIZE = localStorage.getItem('displaySize')
 const CV = document.getElementById('display')
 const CTX = CV.getContext('2d')
 const GRAVITY = 0.5
+const VELOCITYX = 2
+const VELOCITYY = 5
 
 //variables
 
@@ -150,7 +152,7 @@ document.addEventListener('keydown', ({key}) => {
     switch (key) {
         case 'ArrowUp':
             if(MEGAMAN.jump && MEGAMAN.velocityY == 0 && !KEYS.up) {
-                MEGAMAN.velocityY = -10
+                MEGAMAN.velocityY = -(VELOCITYY)
                 MEGAMAN.jump = false
                 KEYS.up = true
             }
@@ -212,27 +214,27 @@ function animation() {
     //FIXME:movement to the left
     if (MEGAMAN.steps >= 0) {
         if (KEYS.right && !KEYS.left) {
-            MEGAMAN.velocityX = +3
+            MEGAMAN.velocityX = +(VELOCITYX)
             if(MEGAMAN.rEdge) {
                 PLATS.forEach((PLAT) => {
                     MEGAMAN.velocityX = 0
-                    PLAT.posX -= 3
-                    MEGAMAN.steps +=3
+                    PLAT.posX -= (VELOCITYX)
+                    MEGAMAN.steps +=(VELOCITYX)
                 })
                 BGS.forEach((BG) =>{
-                    BG.posX -= 3
+                    BG.posX -= (VELOCITYX)
                 })
             }
         } else if (KEYS.left && !KEYS.right) {
-            MEGAMAN.velocityX = -3
+            MEGAMAN.velocityX = -(VELOCITYX)
             if(MEGAMAN.lEdge) {
                 PLATS.forEach((PLAT) => {
                     MEGAMAN.velocityX = 0
-                    PLAT.posX += 3
-                    MEGAMAN.steps -= 3
+                    PLAT.posX += (VELOCITYX)
+                    MEGAMAN.steps -= (VELOCITYX)
                 })
                 BGS.forEach((BG) =>{
-                    BG.posX += 3
+                    BG.posX += (VELOCITYX)
                 })
             }
         } else {
@@ -275,14 +277,3 @@ function animation() {
     console.log(MEGAMAN.jump)
 }
 animation()
-
-// CV.addEventListener('mousemove',mouseLog)
-// function mouseLog(event){
-//     console.log(event.offsetX)
-//     console.log(event.offsetY)
-// }
-// CV.addEventListener('mousedown',testeLog)
-// function testeLog() {
-//     console.log(MEGAMAN.posY)
-//     console.log(PLAT.posY + PLAT.height)
-// }
