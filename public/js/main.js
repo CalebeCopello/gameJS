@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //classes
 class player {
-    constructor(posX,posY,width,height,velocityX,velocityY,aceleration,jump=true,rEdge=false,lEdge=false,steps=0,moveLeft=true,moveRight=true) {
+    constructor(posX,posY,width,height,velocityX,velocityY,aceleration,jump=false,rEdge=false,lEdge=false,steps=0,moveLeft=true,moveRight=true) {
     this.posX = posX
     this.posY = posY
     this.width = width
@@ -47,7 +47,6 @@ class player {
             this.velocityY += GRAVITY
         } else { 
             this.velocityY = 0
-            this.jump = true
         }
         if (this.posX >= 200 - this.width) {
             this.rEdge = true
@@ -150,7 +149,8 @@ const KEYS = {
 document.addEventListener('keydown', ({key}) => {
     switch (key) {
         case 'ArrowUp':
-            if(MEGAMAN.jump && MEGAMAN.velocityY==0) {
+            if(MEGAMAN.jump && MEGAMAN.velocityY == 0 && !KEYS.up) {
+                MEGAMAN.velocityY = -10
                 MEGAMAN.jump = false
                 KEYS.up = true
             }
@@ -176,6 +176,7 @@ document.addEventListener('keyup', ({key}) => {
         case 'ArrowUp':
             if(MEGAMAN.velocityY<=0) {
             MEGAMAN.velocityY = 0
+            MEGAMAN.jump = true
             }
             KEYS.up = false
             break
@@ -240,10 +241,6 @@ function animation() {
     } else {
         MEGAMAN.velocityX = 0
     }
-    if (KEYS.up && MEGAMAN.jump) {
-        MEGAMAN.velocityY = -6
-        MEGAMAN.jump = false
-    }
     //collision
     PLATS.forEach((PLAT) => {
             if (
@@ -257,7 +254,6 @@ function animation() {
             const overlapY = Math.min(MEGAMAN.posY + MEGAMAN.height , PLAT.posY + PLAT.height) - Math.max(MEGAMAN.posY, PLAT.posY);
             if (overlapX > overlapY) {
                 if (MEGAMAN.posY < PLAT.posY) {
-                    // console.log('Hit bottom side');
                     MEGAMAN.velocityY = 0
                     MEGAMAN.jump = true
                 } else {

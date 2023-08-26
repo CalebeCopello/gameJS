@@ -51,7 +51,7 @@ for (let x = 0; x <= 56; x++) {
 for (let x = 0; x <= 56; x++) {
     base[x] = {}
     for (let y = 0; y <= 13; y++) {
-        if(y == 11) {
+        if(y == 12) {
             base[x][y] = 1
         } else {
             base[x][y] = 0
