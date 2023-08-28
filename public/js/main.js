@@ -220,14 +220,13 @@ document.addEventListener('keyup', ({key}) => {
 function animation() {
     requestAnimationFrame(animation)
     CTX.clearRect(0,0,CV.width,CV.height)
-    
     BGS.forEach(BG =>{
         BG.draw()
     })
-    MEGAMAN.update()
     PLATS.forEach(PLAT => {
         PLAT.draw()
     })
+    MEGAMAN.update()
     // console.log(MEGAMAN.steps)
     if (MEGAMAN.steps >= 0) {
         if (KEYS.right && !KEYS.left) {
@@ -236,10 +235,10 @@ function animation() {
                 PLATS.forEach((PLAT) => {
                     MEGAMAN.velocityX = 0
                     PLAT.posX -= (VELOCITYX)
-                    MEGAMAN.steps +=(VELOCITYX)
+                    MEGAMAN.steps += (VELOCITYX)
                 })
                 BGS.forEach((BG) =>{
-                    BG.posX -= (VELOCITYX)
+                    BG.posX -= (VELOCITYX) - 1
                 })
             }
         } else if (KEYS.left && !KEYS.right) {
@@ -251,7 +250,7 @@ function animation() {
                     MEGAMAN.steps -= (VELOCITYX)
                 })
                 BGS.forEach((BG) =>{
-                    BG.posX += (VELOCITYX)
+                    BG.posX += (VELOCITYX) -1
                 })
             }
         } else {
