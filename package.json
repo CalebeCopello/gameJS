@@ -4,7 +4,7 @@
   "description": "A simple game using JavaScript",
   "main": "index.js",
   "scripts": {
-    "devStart": "nodemon server.js"
+    "servStart": "nodemon server.js"
   },
   "repository": {
     "type": "git",

@@ -4,7 +4,7 @@ const CV = document.getElementById('display')
 const CTX = CV.getContext('2d')
 const GRAVITY = 0.5
 const VELOCITYX = 2
-const VELOCITYY = 5
+const VELOCITYY = 7
 
 //variables
 
@@ -229,7 +229,6 @@ function animation() {
         PLAT.draw()
     })
     // console.log(MEGAMAN.steps)
-    //FIXME:movement to the left
     if (MEGAMAN.steps >= 0) {
         if (KEYS.right && !KEYS.left) {
             MEGAMAN.velocityX = +(VELOCITYX)
