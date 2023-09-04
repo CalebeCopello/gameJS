@@ -100,7 +100,7 @@ for (let x = 0; x <= 56; x++) {
                 }
             }
         }
-        //Death pit
+        // Death pit
         if (x >= 20 && x <= 23) {
             base[x][y] = 0
         }

@@ -14,6 +14,7 @@ const KEYS = {
 
 //variables
 let timer
+let MEGAMANIMG
 let BGIMG
 let BASEIMG 
 let MEGAMAN
@@ -37,7 +38,15 @@ function initGame() {
     KEYS.down = false
     KEYS.right =  false
     KEYS.left = false
-    //scenario IMGS
+    //IMGS
+    MEGAMANIMG = [new Image(), new Image(), new Image(), new Image(), new Image(), new Image()]
+    MEGAMANIMG[0].src = '../src/player/s0.png'
+    MEGAMANIMG[1].src = '../src/player/s1.png'
+    MEGAMANIMG[2].src = '../src/player/r0.png'
+    MEGAMANIMG[3].src = '../src/player/r1.png'
+    MEGAMANIMG[4].src = '../src/player/j0.png'
+    MEGAMANIMG[5].src = '../src/player/j1.png'
+
     BGIMG = [new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image()]
     BGIMG[0].src = '../src/background/0.png'
     BGIMG[1].src = '../src/background/1.png'
@@ -57,7 +66,7 @@ function initGame() {
     BASEIMG[6].src = '../src/base/6.png'
     BASEIMG[7].src = '../src/base/7.png'
     BASEIMG[8].src = '../src/base/8.png'
-    MEGAMAN = new player(90,80,24* DISPLAYSIZE,24* DISPLAYSIZE,0,0,1)
+    MEGAMAN = new player(90,80,24,24,0,0,1)
     PLATS = []
     BGS = []
 }
@@ -77,12 +86,24 @@ class player {
     this.steps = this.posX
     this.moveLeft = moveLeft
     this.moveRight = moveRight
+    this.image = MEGAMANIMG[0]
+    this.frames = 0
+    this.framesCycle = 0
     }
     draw() {
-        CTX.fillStyle = 'blue'
-        CTX.fillRect(this.posX,this.posY,this.width,this.height)
+        // CTX.fillStyle = 'blue'
+        // CTX.fillRect(this.posX,this.posY,this.width,this.height)
+        CTX.drawImage(this.image,21*this.frames,0,21,24,this.posX,this.posY,25,25)
     }
     update() {
+        this.framesCycle++
+        if (this.framesCycle <= 120) {
+            this.frames = 0
+        } else if (this.framesCycle > 120 && this.framesCycle <= 130) {
+            this.frames = 1
+        } else if (this.framesCycle > 130){
+            this.framesCycle = 0
+        }
         this.draw()
         this.posX += this.velocityX
         this.steps += this.velocityX
@@ -193,11 +214,13 @@ document.addEventListener('keydown', ({key}) => {
         case 'ArrowLeft':
             MEGAMAN.moveLeft = false
             KEYS.left = true
+            MEGAMAN.image = MEGAMANIMG[1]
             break
         case 'd':
         case 'ArrowRight':
             MEGAMAN.moveRight = false
             KEYS.right = true
+            MEGAMAN.image = MEGAMANIMG[0]
             break
         default:
             console.log(`no command for ${key}`)
