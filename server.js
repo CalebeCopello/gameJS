@@ -7,7 +7,7 @@ app.set('view engine', 'ejs')
 app.use(express.static(path.join(__dirname + '/public')))
 
 app.get('/', (req, res) => {
-    console.log('Here')
+    // console.log('Here')
     res.render('index')
 })
 

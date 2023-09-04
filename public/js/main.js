@@ -5,8 +5,20 @@ const CTX = CV.getContext('2d')
 const GRAVITY = 0.5
 const VELOCITYX = 2
 const VELOCITYY = 7
+const KEYS = {
+    up: false,
+    down: false,
+    right: false,
+    left: false
+}
 
 //variables
+let timer
+let BGIMG
+let BASEIMG 
+let MEGAMAN
+let PLATS
+let BGS
 
 //load
 document.addEventListener('DOMContentLoaded', () => {
@@ -18,7 +30,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 })
 
+//initGame
+function initGame() {
+    //Keys
+    KEYS.up = false
+    KEYS.down = false
+    KEYS.right =  false
+    KEYS.left = false
+    //scenario IMGS
+    BGIMG = [new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image()]
+    BGIMG[0].src = '../src/background/0.png'
+    BGIMG[1].src = '../src/background/1.png'
+    BGIMG[2].src = '../src/background/2.png'
+    BGIMG[3].src = '../src/background/3.png'
+    BGIMG[4].src = '../src/background/4.png'
+    BGIMG[5].src = '../src/background/5.png'
+    BGIMG[6].src = '../src/background/6.png'
 
+    BASEIMG = [new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image()]
+    BASEIMG[0].src = '../src/base/0.png'
+    BASEIMG[1].src = '../src/base/1.png'
+    BASEIMG[2].src = '../src/base/2.png'
+    BASEIMG[3].src = '../src/base/3.png'
+    BASEIMG[4].src = '../src/base/4.png'
+    BASEIMG[5].src = '../src/base/5.png'
+    BASEIMG[6].src = '../src/base/6.png'
+    BASEIMG[7].src = '../src/base/7.png'
+    BASEIMG[8].src = '../src/base/8.png'
+    MEGAMAN = new player(90,80,24* DISPLAYSIZE,24* DISPLAYSIZE,0,0,1)
+    PLATS = []
+    BGS = []
+}
 //classes
 class player {
     constructor(posX,posY,width,height,velocityX,velocityY,aceleration,jump=false,rEdge=false,lEdge=false,steps=0,moveLeft=true,moveRight=true) {
@@ -47,9 +89,14 @@ class player {
         this.posY += this.velocityY
         if (this.posY+this.height+this.velocityY <= CV.height) {
             this.velocityY += GRAVITY
-        } else { 
-            this.velocityY = 0
+        } else {
+            console.log('You lose!')
+            initGame()
+            loadScenario();
         }
+        // else { 
+        //     this.velocityY = 0
+        // }
         if (this.posX >= 200 - this.width) {
             this.rEdge = true
         } else {
@@ -62,28 +109,6 @@ class player {
         }
     }
 }
-
-//load images
-const BGIMG = [new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image()]
-BGIMG[0].src = '../src/background/0.png'
-BGIMG[1].src = '../src/background/1.png'
-BGIMG[2].src = '../src/background/2.png'
-BGIMG[3].src = '../src/background/3.png'
-BGIMG[4].src = '../src/background/4.png'
-BGIMG[5].src = '../src/background/5.png'
-BGIMG[6].src = '../src/background/6.png'
-
-
-const BASEIMG = [new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image(), new Image()]
-BASEIMG[0].src = '../src/base/0.png'
-BASEIMG[1].src = '../src/base/1.png'
-BASEIMG[2].src = '../src/base/2.png'
-BASEIMG[3].src = '../src/base/3.png'
-BASEIMG[4].src = '../src/base/4.png'
-BASEIMG[5].src = '../src/base/5.png'
-BASEIMG[6].src = '../src/base/6.png'
-BASEIMG[7].src = '../src/base/7.png'
-BASEIMG[8].src = '../src/base/8.png'
 
 class background {
     constructor(posX,posY,code) {
@@ -110,7 +135,8 @@ class object {
     }
 }
 
-//TODO:scenario
+initGame()
+
 async function loadScenario() {
     try { 
         const data = await fetch('../src/default.json');
@@ -137,9 +163,6 @@ async function loadScenario() {
 
 loadScenario();
 
-const MEGAMAN = new player(90,80,24* DISPLAYSIZE,24* DISPLAYSIZE,0,0,1)
-const PLATS = []
-const BGS = []
 
 //functions
 function displaySize(s=1) {
@@ -149,12 +172,6 @@ function displaySize(s=1) {
     CV.width*=s
     CV.height*=s
     localStorage.setItem('displaySize',s)
-}
-const KEYS = {
-    up: false,
-    down: false,
-    right: false,
-    left: false
 }
 document.addEventListener('keydown', ({key}) => {
     switch (key) {
@@ -288,7 +305,7 @@ function animation() {
                     MEGAMAN.velocityX = +1
                 }
             }
-            }
+        }
     })
 }
 animation()
