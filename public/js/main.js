@@ -72,37 +72,36 @@ function initGame() {
 }
 //classes
 class player {
-    constructor(posX,posY,width,height,velocityX,velocityY,aceleration,jump=false,rEdge=false,lEdge=false,steps=0,moveLeft=true,moveRight=true) {
+    constructor(posX,posY) {
     this.posX = posX
     this.posY = posY
-    this.width = width
-    this.height = height
-    this.velocityX = velocityX
-    this.velocityY = velocityY
-    this.aceleration = aceleration
-    this.jump = jump
-    this.rEdge = rEdge
-    this.lEdge = lEdge
+    this.width = 23
+    this.height = 23
+    this.velocityX = 0
+    this.velocityY = 0
+    this.aceleration = 1
+    this.jump = false
+    this.rEdge = false
+    this.lEdge = false
     this.steps = this.posX
-    this.moveLeft = moveLeft
-    this.moveRight = moveRight
+    this.moveRight = true
+    this.moveLeft = false
     this.image = MEGAMANIMG[0]
     this.frames = 0
     this.framesCycle = 0
+    this.frameSizeX = 21
+    this.frameSizeY = 24
     }
     draw() {
         // CTX.fillStyle = 'blue'
         // CTX.fillRect(this.posX,this.posY,this.width,this.height)
-        CTX.drawImage(this.image,21*this.frames,0,21,24,this.posX,this.posY,25,25)
+        CTX.drawImage(this.image,21*this.frames,0,this.frameSizeX,this.frameSizeY,this.posX,this.posY,this.width,this.height)
     }
     update() {
-        this.framesCycle++
-        if (this.framesCycle <= 120) {
-            this.frames = 0
-        } else if (this.framesCycle > 120 && this.framesCycle <= 130) {
-            this.frames = 1
-        } else if (this.framesCycle > 130){
-            this.framesCycle = 0
+        if(this.moveRight) {
+            this.image = MEGAMANIMG[0]
+        } else {
+            this.image = MEGAMANIMG[1]
         }
         this.draw()
         this.posX += this.velocityX
@@ -212,15 +211,15 @@ document.addEventListener('keydown', ({key}) => {
             break
         case 'a':
         case 'ArrowLeft':
-            MEGAMAN.moveLeft = false
+            MEGAMAN.moveLeft = true
+            MEGAMAN.moveRight = false
             KEYS.left = true
-            MEGAMAN.image = MEGAMANIMG[1]
             break
         case 'd':
         case 'ArrowRight':
-            MEGAMAN.moveRight = false
+            MEGAMAN.moveRight = true
+            MEGAMAN.moveLeft = false
             KEYS.right = true
-            MEGAMAN.image = MEGAMANIMG[0]
             break
         default:
             console.log(`no command for ${key}`)
@@ -233,7 +232,6 @@ document.addEventListener('keyup', ({key}) => {
         case 'ArrowUp':
             if(MEGAMAN.velocityY<=0) {
             MEGAMAN.velocityY = 0
-            // MEGAMAN.jump = true
             }
             KEYS.up = false
             break
