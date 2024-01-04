@@ -1,0 +1,28 @@
+{
+  "name": "gamejs",
+  "version": "1.0.0",
+  "description": "A simple game using JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "servStart": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CalebeCopello/gameJS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CalebeCopello/gameJS/issues"
+  },
+  "homepage": "https://github.com/CalebeCopello/gameJS#readme",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "mime-types": "^2.1.35"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

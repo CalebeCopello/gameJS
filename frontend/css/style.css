@@ -1,0 +1,17 @@
+:root {
+    --red: rgb(176,55,44);
+    --cream: rgb(176,162,135);
+    --grey: rgb(87,75,85);
+    --blue: rgb(23,21,43)
+}
+body {
+    display: flex;
+    justify-content: center;
+    background-color: var(--cream);
+}
+.display {
+    margin: 1rem auto;
+    border: 3px solid var(--red);
+    border-radius: 0.5rem;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+}
