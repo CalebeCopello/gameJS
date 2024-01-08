@@ -21,6 +21,7 @@ const MOVESTATS = {
 //variables
 let PLAYERIMG = []
 let PLAYER
+let frameDuration = 60
 
 //set display propierties
 CV.width = 256 * DISPLAYSIZE
@@ -52,8 +53,8 @@ function setPlayerSprites() {
 			banner: {
 				0: new Image(),
 				1: new Image(),
-			}
-		}
+			},
+		},
 	}
 	PLAYERIMG.small.standing[0].src = '/src/player/small/sm01.png'
 	PLAYERIMG.small.moving[0].src = '/src/player/small/sm02.png'
@@ -84,17 +85,17 @@ class player {
 	}
 	draw() {
 		CTX.save()
-		if(!MOVESTATS.facingRight) {
-			CTX.scale(-1,1)
+		if (!MOVESTATS.facingRight) {
+			CTX.scale(-1, 1)
 		}
-		if(MOVESTATS.moving) {
+		if (MOVESTATS.moving) {
 			this.image = PLAYERIMG.small.moving[MOVESTATS.frame]
 		} else {
 			this.image = PLAYERIMG.small.standing[0]
 		}
 		CTX.drawImage(
 			this.image,
-			MOVESTATS.facingRight ? this.posX : - this.posX - 16 * DISPLAYSIZE,
+			MOVESTATS.facingRight ? this.posX : -this.posX - 16 * DISPLAYSIZE,
 			this.posY,
 			16 * DISPLAYSIZE,
 			16 * DISPLAYSIZE
@@ -102,10 +103,13 @@ class player {
 		CTX.restore()
 	}
 	update() {
+		console.log(MOVESTATS.start)
 		const now = performance.now()
-		console.log(now)
-		const elapsedFrame = Math.floor((now - this.startTime) / 60)
-		if(MOVESTATS.moving) {
+		if (MOVESTATS.start == 0) frameDuration = 60
+		const elapsedFrame = Math.floor((now - this.startTime) / frameDuration)
+		if (MOVESTATS.moving) {
+			if(MOVESTATS.start >= 500) frameDuration = 50
+			if(MOVESTATS.start >= 1000) frameDuration = 10
 			MOVESTATS.frame = elapsedFrame % 3
 		}
 		this.draw()
@@ -119,13 +123,15 @@ document.addEventListener('keydown', ({ key }) => {
 		case 'ArrowLeft':
 			MOVEINPUT.left = true
 			MOVESTATS.facingRight = false
-
+			MOVESTATS.moving = true
+			MOVESTATS.start = performance.now()
 			break
 		case 'd':
 		case 'ArrowRight':
 			MOVEINPUT.right = true
 			MOVESTATS.facingRight = true
 			MOVESTATS.moving = true
+			MOVESTATS.start = performance.now()
 			break
 		default:
 			console.log(key)
@@ -137,11 +143,13 @@ document.addEventListener('keyup', ({ key }) => {
 		case 'ArrowLeft':
 			MOVEINPUT.left = false
 			MOVESTATS.moving = false
+			MOVESTATS.start = 0
 			break
 		case 'd':
 		case 'ArrowRight':
 			MOVEINPUT.right = false
 			MOVESTATS.moving = false
+			MOVESTATS.start = 0
 			break
 		default:
 			console.log(key)
