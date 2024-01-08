@@ -21,7 +21,7 @@ const MOVESTATS = {
 //variables
 let PLAYERIMG = []
 let PLAYER
-let frameDuration = 60
+let frameDuration = 90
 
 //set display propierties
 CV.width = 256 * DISPLAYSIZE
@@ -103,13 +103,18 @@ class player {
 		CTX.restore()
 	}
 	update() {
-		console.log(MOVESTATS.start)
 		const now = performance.now()
-		if (MOVESTATS.start == 0) frameDuration = 60
 		const elapsedFrame = Math.floor((now - this.startTime) / frameDuration)
+		// code for running
+		// if(now >= MOVESTATS.start+500 && now < MOVESTATS.start+1000) {
+		// 	frameDuration = 50
+		// 	console.log('frameDuration = 40')
+		// }
+		// else if(now >= MOVESTATS.start+1000) {
+		// 	frameDuration = 30
+		// 	console.log('frameDuration = 10')
+		// }
 		if (MOVESTATS.moving) {
-			if(MOVESTATS.start >= 500) frameDuration = 50
-			if(MOVESTATS.start >= 1000) frameDuration = 10
 			MOVESTATS.frame = elapsedFrame % 3
 		}
 		this.draw()
@@ -123,18 +128,17 @@ document.addEventListener('keydown', ({ key }) => {
 		case 'ArrowLeft':
 			MOVEINPUT.left = true
 			MOVESTATS.facingRight = false
+			// if(!MOVESTATS.moving) MOVESTATS.start = performance.now()
 			MOVESTATS.moving = true
-			MOVESTATS.start = performance.now()
-			break
+		break
 		case 'd':
 		case 'ArrowRight':
-			MOVEINPUT.right = true
-			MOVESTATS.facingRight = true
-			MOVESTATS.moving = true
-			MOVESTATS.start = performance.now()
+				MOVEINPUT.right = true
+				MOVESTATS.facingRight = true
+				// if(!MOVESTATS.moving) MOVESTATS.start = performance.now()
+				MOVESTATS.moving = true
 			break
 		default:
-			console.log(key)
 	}
 })
 document.addEventListener('keyup', ({ key }) => {
@@ -143,16 +147,13 @@ document.addEventListener('keyup', ({ key }) => {
 		case 'ArrowLeft':
 			MOVEINPUT.left = false
 			MOVESTATS.moving = false
-			MOVESTATS.start = 0
 			break
 		case 'd':
 		case 'ArrowRight':
 			MOVEINPUT.right = false
 			MOVESTATS.moving = false
-			MOVESTATS.start = 0
 			break
 		default:
-			console.log(key)
 	}
 })
 
