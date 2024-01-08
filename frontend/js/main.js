@@ -4,7 +4,7 @@ const CTX = CV.getContext('2d')
 const DISPLAYSIZE = 3
 const GRAVITY = 0.5 * DISPLAYSIZE
 const VELOCITYX = 1 * DISPLAYSIZE
-const VELOCITYY = 7 * DISPLAYSIZE
+const VELOCITYY = 3 * DISPLAYSIZE
 const MOVEINPUT = {
 	up: false,
 	down: false,
@@ -14,7 +14,9 @@ const MOVEINPUT = {
 const MOVESTATS = {
 	facingRight: true,
 	moving: false,
+	ducking: false,
 	running: false,
+	jumping: false,
 	start: 0,
 }
 
@@ -82,6 +84,7 @@ class player {
 		this.height = 16 * DISPLAYSIZE
 		this.image = PLAYERIMG.small.standing[0]
 		this.startTime = performance.now()
+		this.size = 'small'
 	}
 	draw() {
 		CTX.save()
@@ -90,6 +93,8 @@ class player {
 		}
 		if (MOVESTATS.moving) {
 			this.image = PLAYERIMG.small.moving[MOVESTATS.frame]
+		} else if(MOVESTATS.jumping) {
+			this.image = PLAYERIMG.small.jumping[MOVESTATS.frame]
 		} else {
 			this.image = PLAYERIMG.small.standing[0]
 		}
@@ -117,12 +122,16 @@ class player {
 		if (MOVESTATS.moving) {
 			MOVESTATS.frame = elapsedFrame % 3
 		}
+		if(!MOVESTATS.jumping) {
+			if(this.posY <= 150 * DISPLAYSIZE) this.posY += VELOCITYY
+		}
 		this.draw()
 	}
 }
 
 //controler input
 document.addEventListener('keydown', ({ key }) => {
+	console.log(key)
 	switch (key) {
 		case 'a':
 		case 'ArrowLeft':
@@ -130,13 +139,18 @@ document.addEventListener('keydown', ({ key }) => {
 			MOVESTATS.facingRight = false
 			// if(!MOVESTATS.moving) MOVESTATS.start = performance.now()
 			MOVESTATS.moving = true
-		break
+			break
 		case 'd':
 		case 'ArrowRight':
-				MOVEINPUT.right = true
-				MOVESTATS.facingRight = true
-				// if(!MOVESTATS.moving) MOVESTATS.start = performance.now()
-				MOVESTATS.moving = true
+			MOVEINPUT.right = true
+			MOVESTATS.facingRight = true
+			// if(!MOVESTATS.moving) MOVESTATS.start = performance.now()
+			MOVESTATS.moving = true
+			break
+		case 'w':
+		case 'ArrowUp':
+			MOVESTATS.jumping = true
+			MOVESTATS.frame = 0
 			break
 		default:
 	}
@@ -153,6 +167,11 @@ document.addEventListener('keyup', ({ key }) => {
 			MOVEINPUT.right = false
 			MOVESTATS.moving = false
 			break
+		case 'w':
+		case 'ArrowUp':
+			MOVESTATS.jumping = false
+			MOVESTATS.frame = 0
+			break
 		default:
 	}
 })
@@ -167,6 +186,9 @@ function animation() {
 	}
 	if (MOVEINPUT.left) {
 		PLAYER.posX -= VELOCITYX
+	}
+	if(MOVESTATS.jumping) {
+		PLAYER.posY -= VELOCITYY
 	}
 }
 setPlayerSprites()
