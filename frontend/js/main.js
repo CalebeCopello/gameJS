@@ -13,7 +13,9 @@ const MOVEINPUT = {
 }
 const MOVESTATS = {
 	facingRight: true,
+	moving: false,
 	running: false,
+	start: 0,
 }
 
 //variables
@@ -28,8 +30,40 @@ CTX.imageSmoothingEnabled = false
 
 //function to set sprites
 function setPlayerSprites() {
-	PLAYERIMG = [new Image()]
-	PLAYERIMG[0].src = '/src/player/small/sm01.png'
+	PLAYERIMG = {
+		small: {
+			standing: {
+				0: new Image(),
+			},
+			moving: {
+				0: new Image(),
+				1: new Image(),
+				2: new Image(),
+			},
+			pivoting: {
+				0: new Image(),
+			},
+			jumping: {
+				0: new Image(),
+			},
+			dying: {
+				0: new Image(),
+			},
+			banner: {
+				0: new Image(),
+				1: new Image(),
+			}
+		}
+	}
+	PLAYERIMG.small.standing[0].src = '/src/player/small/sm01.png'
+	PLAYERIMG.small.moving[0].src = '/src/player/small/sm02.png'
+	PLAYERIMG.small.moving[1].src = '/src/player/small/sm03.png'
+	PLAYERIMG.small.moving[2].src = '/src/player/small/sm04.png'
+	PLAYERIMG.small.pivoting[0].src = '/src/player/small/sm05.png'
+	PLAYERIMG.small.jumping[0].src = '/src/player/small/sm06.png'
+	PLAYERIMG.small.dying[0].src = '/src/player/small/sm07.png'
+	PLAYERIMG.small.banner[0].src = '/src/player/small/sm08.png'
+	PLAYERIMG.small.banner[1].src = '/src/player/small/sm09.png'
 }
 
 function initGame() {
@@ -45,13 +79,18 @@ class player {
 		this.velocityY = 0
 		this.width = 16 * DISPLAYSIZE
 		this.height = 16 * DISPLAYSIZE
-		this.image = PLAYERIMG[0]
-		this.frame = 0
+		this.image = PLAYERIMG.small.standing[0]
+		this.startTime = performance.now()
 	}
 	draw() {
 		CTX.save()
 		if(!MOVESTATS.facingRight) {
 			CTX.scale(-1,1)
+		}
+		if(MOVESTATS.moving) {
+			this.image = PLAYERIMG.small.moving[MOVESTATS.frame]
+		} else {
+			this.image = PLAYERIMG.small.standing[0]
 		}
 		CTX.drawImage(
 			this.image,
@@ -63,6 +102,12 @@ class player {
 		CTX.restore()
 	}
 	update() {
+		const now = performance.now()
+		console.log(now)
+		const elapsedFrame = Math.floor((now - this.startTime) / 60)
+		if(MOVESTATS.moving) {
+			MOVESTATS.frame = elapsedFrame % 3
+		}
 		this.draw()
 	}
 }
@@ -74,11 +119,13 @@ document.addEventListener('keydown', ({ key }) => {
 		case 'ArrowLeft':
 			MOVEINPUT.left = true
 			MOVESTATS.facingRight = false
+
 			break
 		case 'd':
 		case 'ArrowRight':
 			MOVEINPUT.right = true
 			MOVESTATS.facingRight = true
+			MOVESTATS.moving = true
 			break
 		default:
 			console.log(key)
@@ -89,10 +136,12 @@ document.addEventListener('keyup', ({ key }) => {
 		case 'a':
 		case 'ArrowLeft':
 			MOVEINPUT.left = false
+			MOVESTATS.moving = false
 			break
 		case 'd':
 		case 'ArrowRight':
 			MOVEINPUT.right = false
+			MOVESTATS.moving = false
 			break
 		default:
 			console.log(key)
