@@ -3,13 +3,17 @@ const CV = document.getElementById('display')
 const CTX = CV.getContext('2d')
 const DISPLAYSIZE = 3
 const GRAVITY = 0.5 * DISPLAYSIZE
-const VELOCITYX = 2 * DISPLAYSIZE
+const VELOCITYX = 1 * DISPLAYSIZE
 const VELOCITYY = 7 * DISPLAYSIZE
 const MOVEINPUT = {
 	up: false,
 	down: false,
 	right: false,
 	left: false,
+}
+const MOVESTATS = {
+	facingRight: true,
+	running: false,
 }
 
 //variables
@@ -45,7 +49,18 @@ class player {
 		this.frame = 0
 	}
 	draw() {
-		CTX.drawImage(this.image, this.posX, this.posY, 16 * DISPLAYSIZE, 16 * DISPLAYSIZE)
+		CTX.save()
+		if(!MOVESTATS.facingRight) {
+			CTX.scale(-1,1)
+		}
+		CTX.drawImage(
+			this.image,
+			MOVESTATS.facingRight ? this.posX : - this.posX - 16 * DISPLAYSIZE,
+			this.posY,
+			16 * DISPLAYSIZE,
+			16 * DISPLAYSIZE
+		)
+		CTX.restore()
 	}
 	update() {
 		this.draw()
@@ -55,31 +70,33 @@ class player {
 //controler input
 document.addEventListener('keydown', ({ key }) => {
 	switch (key) {
-        case 'a':
-            case 'ArrowLeft':
-                MOVEINPUT.left = true
-                break
+		case 'a':
+		case 'ArrowLeft':
+			MOVEINPUT.left = true
+			MOVESTATS.facingRight = false
+			break
 		case 'd':
 		case 'ArrowRight':
 			MOVEINPUT.right = true
+			MOVESTATS.facingRight = true
 			break
 		default:
 			console.log(key)
 	}
 })
-document.addEventListener('keyup', ({key}) => {
-    switch (key) {
-        case 'a':
-        case 'ArrowLeft':
-            MOVEINPUT.left = false
-            break
-        case 'd':
-        case 'ArrowRight':
-            MOVEINPUT.right = false
-            break
-        default:
-            console.log(key)
-    }
+document.addEventListener('keyup', ({ key }) => {
+	switch (key) {
+		case 'a':
+		case 'ArrowLeft':
+			MOVEINPUT.left = false
+			break
+		case 'd':
+		case 'ArrowRight':
+			MOVEINPUT.right = false
+			break
+		default:
+			console.log(key)
+	}
 })
 
 //animation
@@ -87,12 +104,12 @@ function animation() {
 	requestAnimationFrame(animation)
 	CTX.clearRect(0, 0, CV.width, CV.height)
 	PLAYER.update()
-    if(MOVEINPUT.right) {
-        PLAYER.posX += VELOCITYX
-    } 
-    if (MOVEINPUT.left) {
-        PLAYER.posX -= VELOCITYX
-    }
+	if (MOVEINPUT.right) {
+		PLAYER.posX += VELOCITYX
+	}
+	if (MOVEINPUT.left) {
+		PLAYER.posX -= VELOCITYX
+	}
 }
 setPlayerSprites()
 initGame()
