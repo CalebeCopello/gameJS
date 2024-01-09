@@ -4,7 +4,7 @@ const CTX = CV.getContext('2d')
 const DISPLAYSIZE = 3
 const GRAVITY = 0.5 * DISPLAYSIZE
 const VELOCITYX = 1 * DISPLAYSIZE
-const VELOCITYY = 3 * DISPLAYSIZE
+const VELOCITYY = 7 * DISPLAYSIZE
 const MOVEINPUT = {
 	up: false,
 	down: false,
@@ -16,7 +16,10 @@ const MOVESTATS = {
 	moving: false,
 	ducking: false,
 	running: false,
-	jumping: false,
+	jumping: {
+		action: false,
+		start: 0,
+	},
 	start: 0,
 }
 
@@ -91,13 +94,14 @@ class player {
 		if (!MOVESTATS.facingRight) {
 			CTX.scale(-1, 1)
 		}
-		if (MOVESTATS.moving) {
+		if (MOVESTATS.jumping.action) {
+			this.image = PLAYERIMG.small.jumping[0]
+		} else if (MOVESTATS.moving && !MOVESTATS.jumping.action) {
 			this.image = PLAYERIMG.small.moving[MOVESTATS.frame]
-		} else if(MOVESTATS.jumping) {
-			this.image = PLAYERIMG.small.jumping[MOVESTATS.frame]
-		} else {
+		} else if (!MOVESTATS.moving && !MOVESTATS.jumping.action) {
 			this.image = PLAYERIMG.small.standing[0]
 		}
+		console.log(MOVESTATS.moving, MOVESTATS.moving)
 		CTX.drawImage(
 			this.image,
 			MOVESTATS.facingRight ? this.posX : -this.posX - 16 * DISPLAYSIZE,
@@ -110,7 +114,7 @@ class player {
 	update() {
 		const now = performance.now()
 		const elapsedFrame = Math.floor((now - this.startTime) / frameDuration)
-		// code for running
+		// TODO:code for running
 		// if(now >= MOVESTATS.start+500 && now < MOVESTATS.start+1000) {
 		// 	frameDuration = 50
 		// 	console.log('frameDuration = 40')
@@ -122,9 +126,16 @@ class player {
 		if (MOVESTATS.moving) {
 			MOVESTATS.frame = elapsedFrame % 3
 		}
-		if(!MOVESTATS.jumping) {
-			if(this.posY <= 150 * DISPLAYSIZE) this.posY += VELOCITYY
+		//Hit the bottom of screen, reset jumping status
+		if (this.posY + this.height + this.velocityY <= CV.height) {
+			this.velocityY += GRAVITY
+		} else {
+			this.velocityY = 0
+			MOVESTATS.jumping.action = false
 		}
+		if (!MOVESTATS.jumping.action) {
+		}
+		this.posY += this.velocityY
 		this.draw()
 	}
 }
@@ -149,8 +160,12 @@ document.addEventListener('keydown', ({ key }) => {
 			break
 		case 'w':
 		case 'ArrowUp':
-			MOVESTATS.jumping = true
-			MOVESTATS.frame = 0
+			if (!MOVESTATS.jumping.action) {
+				MOVESTATS.jumping.action = true
+				MOVESTATS.jumping.start = performance.now()
+				MOVESTATS.frame = 0
+				PLAYER.velocityY -= VELOCITYY
+			}
 			break
 		default:
 	}
@@ -169,8 +184,6 @@ document.addEventListener('keyup', ({ key }) => {
 			break
 		case 'w':
 		case 'ArrowUp':
-			MOVESTATS.jumping = false
-			MOVESTATS.frame = 0
 			break
 		default:
 	}
@@ -186,9 +199,6 @@ function animation() {
 	}
 	if (MOVEINPUT.left) {
 		PLAYER.posX -= VELOCITYX
-	}
-	if(MOVESTATS.jumping) {
-		PLAYER.posY -= VELOCITYY
 	}
 }
 setPlayerSprites()
