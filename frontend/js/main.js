@@ -27,6 +27,8 @@ const MOVESTATS = {
 let PLAYERIMG = []
 let PLAYER
 let frameDuration = 90
+let BGS
+let BGIMG
 
 //set display propierties
 CV.width = 256 * DISPLAYSIZE
@@ -34,8 +36,9 @@ CV.height = 224 * DISPLAYSIZE
 CV.style.backgroundColor = 'rgb(255,255,255)'
 CTX.imageSmoothingEnabled = false
 
-//function to set sprites
+//function to set sprites for player
 function setPlayerSprites() {
+	const DIR = '../src/player/'
 	PLAYERIMG = {
 		small: {
 			standing: {
@@ -61,19 +64,51 @@ function setPlayerSprites() {
 			},
 		},
 	}
-	PLAYERIMG.small.standing[0].src = '/src/player/small/sm01.png'
-	PLAYERIMG.small.moving[0].src = '/src/player/small/sm02.png'
-	PLAYERIMG.small.moving[1].src = '/src/player/small/sm03.png'
-	PLAYERIMG.small.moving[2].src = '/src/player/small/sm04.png'
-	PLAYERIMG.small.pivoting[0].src = '/src/player/small/sm05.png'
-	PLAYERIMG.small.jumping[0].src = '/src/player/small/sm06.png'
-	PLAYERIMG.small.dying[0].src = '/src/player/small/sm07.png'
-	PLAYERIMG.small.banner[0].src = '/src/player/small/sm08.png'
-	PLAYERIMG.small.banner[1].src = '/src/player/small/sm09.png'
+	PLAYERIMG.small.standing[0].src = DIR + 'small/sm01.png'
+	PLAYERIMG.small.moving[0].src = DIR + '/small/sm02.png'
+	PLAYERIMG.small.moving[1].src = DIR + '/small/sm03.png'
+	PLAYERIMG.small.moving[2].src = DIR + '/small/sm04.png'
+	PLAYERIMG.small.pivoting[0].src = DIR + '/small/sm05.png'
+	PLAYERIMG.small.jumping[0].src = DIR + '/small/sm06.png'
+	PLAYERIMG.small.dying[0].src = DIR + '/small/sm07.png'
+	PLAYERIMG.small.banner[0].src = DIR + '/small/sm08.png'
+	PLAYERIMG.small.banner[1].src = DIR + '/small/sm09.png'
 }
+
+//function to set sprites for scenario
+function setScenarioTiles() {
+	const DIR = '../src/scenario/'
+	BGIMG = [new Image()]
+	BGIMG[0].src = DIR + 'palette2/ws0.png'
+
+	BASEIMG = [new Image()]
+	BASEIMG[0].src = DIR + 'palette1/gs1.png'
+}
+setScenarioTiles()
+
+//function to load scenario
+
+async function loadScenario() {
+	try {
+		const data = await fetch('../src/default.json')
+		if (!data.ok) {
+			throw new Error('Network response was not ok')
+		}
+		const scenario = await data.json()
+		for (x = 0; x < Object.keys(scenario.background).length; x++) {
+			for (y = 0; y < Object.keys(scenario.background[x]).length; y++) {
+				BGS.push(new background(x * (16 * DISPLAYSIZE), y * (16 * DISPLAYSIZE), scenario.background[x][y]))
+			}
+		}
+	} catch (error) {
+		console.log(error)
+	}
+}
+loadScenario()
 
 function initGame() {
 	PLAYER = new player(1 * DISPLAYSIZE, 150 * DISPLAYSIZE)
+	BGS = []
 }
 
 //player set
@@ -101,7 +136,6 @@ class player {
 		} else if (!MOVESTATS.moving && !MOVESTATS.jumping.action) {
 			this.image = PLAYERIMG.small.standing[0]
 		}
-		console.log(MOVESTATS.moving, MOVESTATS.moving)
 		CTX.drawImage(
 			this.image,
 			MOVESTATS.facingRight ? this.posX : -this.posX - 16 * DISPLAYSIZE,
@@ -137,6 +171,19 @@ class player {
 		}
 		this.posY += this.velocityY
 		this.draw()
+	}
+}
+
+//background set
+
+class background {
+	constructor(posX, posY, code) {
+		this.posX = posX
+		this.posY = posY
+		this.code = code
+	}
+	draw() {
+		CTX.drawImage(BGIMG[this.code], this.posX, this.posY, 16 * DISPLAYSIZE, 16 * DISPLAYSIZE)
 	}
 }
 
@@ -193,6 +240,9 @@ document.addEventListener('keyup', ({ key }) => {
 function animation() {
 	requestAnimationFrame(animation)
 	CTX.clearRect(0, 0, CV.width, CV.height)
+	BGS.forEach((BG) => {
+		BG.draw()
+	})
 	PLAYER.update()
 	if (MOVEINPUT.right) {
 		PLAYER.posX += VELOCITYX
