@@ -29,6 +29,7 @@ let PLAYER
 let frameDuration = 90
 let BGS
 let BGIMG
+let PLATS
 
 //set display propierties
 CV.width = 256 * DISPLAYSIZE
@@ -95,9 +96,27 @@ async function loadScenario() {
 			throw new Error('Network response was not ok')
 		}
 		const scenario = await data.json()
-		for (x = 0; x < Object.keys(scenario.background).length; x++) {
-			for (y = 0; y < Object.keys(scenario.background[x]).length; y++) {
-				BGS.push(new background(x * (16 * DISPLAYSIZE), y * (16 * DISPLAYSIZE), scenario.background[x][y]))
+		for (let x = 0; x < Object.keys(scenario.background).length; x++) {
+			for (let y = 0; y < Object.keys(scenario.background[x]).length; y++) {
+				BGS.push(
+					new background(
+						x * (16 * DISPLAYSIZE),
+						y * (16 * DISPLAYSIZE),
+						scenario.background[x][y]
+					)
+				)
+			}
+		}
+		for (let x = 0; x < Object.keys(scenario.base).length; x++) {
+			for (let y = 0; y < Object.keys(scenario.base[x]).length; y++) {
+				if (scenario.base[x][y] != 0)
+					PLATS.push(
+						new object(
+							x * (16 * DISPLAYSIZE),
+							y * (16 * DISPLAYSIZE),
+							scenario.base[x][y] -1
+						)
+					)
 			}
 		}
 	} catch (error) {
@@ -109,6 +128,7 @@ loadScenario()
 function initGame() {
 	PLAYER = new player(1 * DISPLAYSIZE, 150 * DISPLAYSIZE)
 	BGS = []
+	PLATS = []
 }
 
 //player set
@@ -174,7 +194,7 @@ class player {
 	}
 }
 
-//background set
+//scenario set
 
 class background {
 	constructor(posX, posY, code) {
@@ -183,7 +203,30 @@ class background {
 		this.code = code
 	}
 	draw() {
-		CTX.drawImage(BGIMG[this.code], this.posX, this.posY, 16 * DISPLAYSIZE, 16 * DISPLAYSIZE)
+		CTX.drawImage(
+			BGIMG[this.code],
+			this.posX,
+			this.posY,
+			16 * DISPLAYSIZE,
+			16 * DISPLAYSIZE
+		)
+	}
+}
+
+class object {
+	constructor(posX, posY, code) {
+		this.posX = posX
+		this.posY = posY
+		this.code = code
+	}
+	draw() {
+		CTX.drawImage(
+			BASEIMG[this.code],
+			this.posX,
+			this.posY,
+			16 * DISPLAYSIZE,
+			16 * DISPLAYSIZE
+		)
 	}
 }
 
@@ -242,6 +285,9 @@ function animation() {
 	CTX.clearRect(0, 0, CV.width, CV.height)
 	BGS.forEach((BG) => {
 		BG.draw()
+	})
+	PLATS.forEach((PLAT) => {
+		PLAT.draw()
 	})
 	PLAYER.update()
 	if (MOVEINPUT.right) {

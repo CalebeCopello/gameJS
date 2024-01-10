@@ -11,7 +11,7 @@ const cache = {
 	base: base,
 	foreground: foreground,
 }
-const height = 14
+const height = 13
 const width = 60
 //background fill
 for (let x = 0; x <= width; x++) {
@@ -24,7 +24,11 @@ for (let x = 0; x <= width; x++) {
 for (let x = 0; x <= width; x++) {
 	base[x] = {}
 	for (let y = 0; y <= height; y++) {
-		base[x][y] = 0
+		if (y == height) {
+			base[x][y] = 1
+		} else {
+			base[x][y] = 0
+		}
 	}
 }
 //foreground fill
