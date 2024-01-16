@@ -126,7 +126,7 @@ async function loadScenario() {
 loadScenario()
 
 function initGame() {
-	PLAYER = new player(1 * DISPLAYSIZE, 150 * DISPLAYSIZE)
+	PLAYER = new player(150 * DISPLAYSIZE, 150 * DISPLAYSIZE)
 	BGS = []
 	PLATS = []
 }
@@ -291,10 +291,16 @@ function animation() {
 	})
 	PLAYER.update()
 	if (MOVEINPUT.right) {
-		PLAYER.posX += VELOCITYX
+		PLATS.forEach((PLAT) => {
+			PLAYER.velocityX = 0
+			PLAT.posX -= (VELOCITYX)
+		})
 	}
 	if (MOVEINPUT.left) {
-		PLAYER.posX -= VELOCITYX
+		PLATS.forEach((PLAT) => {
+			PLAYER.velocityX = 0
+			PLAT.posX += (VELOCITYX)
+		})
 	}
 }
 setPlayerSprites()
