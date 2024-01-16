@@ -114,7 +114,7 @@ async function loadScenario() {
 						new object(
 							x * (16 * DISPLAYSIZE),
 							y * (16 * DISPLAYSIZE),
-							scenario.base[x][y] -1
+							scenario.base[x][y] - 1
 						)
 					)
 			}
@@ -177,19 +177,19 @@ class player {
 		// 	frameDuration = 30
 		// 	console.log('frameDuration = 10')
 		// }
+
 		if (MOVESTATS.moving) {
 			MOVESTATS.frame = elapsedFrame % 3
 		}
+
 		//Hit the bottom of screen, reset jumping status
+		this.posY += this.velocityY
 		if (this.posY + this.height + this.velocityY <= CV.height) {
 			this.velocityY += GRAVITY
 		} else {
 			this.velocityY = 0
 			MOVESTATS.jumping.action = false
 		}
-		if (!MOVESTATS.jumping.action) {
-		}
-		this.posY += this.velocityY
 		this.draw()
 	}
 }
@@ -218,6 +218,8 @@ class object {
 		this.posX = posX
 		this.posY = posY
 		this.code = code
+		this.width = 16 * DISPLAYSIZE
+		this.height = 16 * DISPLAYSIZE
 	}
 	draw() {
 		CTX.drawImage(
@@ -293,15 +295,45 @@ function animation() {
 	if (MOVEINPUT.right) {
 		PLATS.forEach((PLAT) => {
 			PLAYER.velocityX = 0
-			PLAT.posX -= (VELOCITYX)
+			PLAT.posX -= VELOCITYX
 		})
 	}
 	if (MOVEINPUT.left) {
 		PLATS.forEach((PLAT) => {
 			PLAYER.velocityX = 0
-			PLAT.posX += (VELOCITYX)
+			PLAT.posX += VELOCITYX
 		})
 	}
+	PLATS.forEach((PLAT) => {
+		if (
+			PLAYER.posX + PLAYER.width >= PLAT.posX &&
+			PLAYER.posX <= PLAT.posX + PLAT.width &&
+			PLAYER.posY + PLAYER.height + PLAYER.velocityY >= PLAT.posY &&
+			PLAYER.posY + PLAYER.velocityY <= PLAT.posY + PLAT.height
+		) {
+			const overlapX =
+				Math.min(PLAYER.posX + PLAYER.width, PLAT.posX + PLAT.width) -
+				Math.max(PLAYER.posX, PLAT.posX)
+			const overlapY =
+				Math.min(PLAYER.posY + PLAYER.height, PLAT.posY + PLAT.height) -
+				Math.max(PLAYER.posY, PLAT.posY)
+			if (overlapX > overlapY) {
+				if (PLAYER.posY < PLAT.posY) {
+					PLAYER.velocityY = 0
+					MOVESTATS.jumping.action = false
+				} else {
+					PLAYER.posY = PLAT.posY + PLAT.height
+					PLAYER.velocityY = 0
+				}
+			} else {
+				if (PLAYER.posX < PLAT.posX) {
+					PLAYER.velocityX = -1
+				} else {
+					PLAYER.velocityX = +1
+				}
+			}
+		}
+	})
 }
 setPlayerSprites()
 initGame()

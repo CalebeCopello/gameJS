@@ -70,6 +70,7 @@
                 const overlapX = Math.min(RRECT.posX + RRECT.width, BRECT.posX + BRECT.width) - Math.max(RRECT.posX, BRECT.posX);
                 const overlapY = Math.min(RRECT.posY + RRECT.height, BRECT.posY + BRECT.height) - Math.max(RRECT.posY, BRECT.posY);
                 console.log('overlapX: ' + overlapX + '\noverlapY: '+overlapY)
+                console.log('RRECT.posX: ' + RRECT.posX + '\n RRECT.posY: ' + RRECT.posY, '\n BRECT.posX: ' + BRECT.posX, '\n BRECT.posY: ' + BRECT.posY)
                 if (overlapX > overlapY) {
                     if (RRECT.posY < BRECT.posY) {
                         console.log('Hit bottom side');

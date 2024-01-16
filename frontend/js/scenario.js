@@ -24,10 +24,17 @@ for (let x = 0; x <= width; x++) {
 for (let x = 0; x <= width; x++) {
 	base[x] = {}
 	for (let y = 0; y <= height; y++) {
+		//base line
 		if (y == height) {
 			base[x][y] = 1
 		} else {
 			base[x][y] = 0
+		}
+
+		if (y == 9) {
+			if (x >= 7 && x <=10) {
+				base[x][y] = 1
+			}
 		}
 	}
 }
