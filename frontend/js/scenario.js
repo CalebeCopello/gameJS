@@ -36,6 +36,12 @@ for (let x = 0; x <= width; x++) {
 				base[x][y] = 1
 			}
 		}
+
+		if (y == height -1) {
+			if (x == 13) {
+				base[x][y] = 1
+			}
+		}
 	}
 }
 //foreground fill

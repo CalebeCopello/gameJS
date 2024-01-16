@@ -182,7 +182,6 @@ class player {
 			MOVESTATS.frame = elapsedFrame % 3
 		}
 
-		//Hit the bottom of screen, reset jumping status
 		this.posY += this.velocityY
 		if (this.posY + this.height + this.velocityY <= CV.height) {
 			this.velocityY += GRAVITY
@@ -291,6 +290,40 @@ function animation() {
 	PLATS.forEach((PLAT) => {
 		PLAT.draw()
 	})
+	PLATS.forEach((PLAT) => {
+		if (
+			PLAYER.posX + PLAYER.width >= PLAT.posX &&
+			PLAYER.posX <= PLAT.posX + PLAT.width &&
+			PLAYER.posY + PLAYER.height + PLAYER.velocityY >= PLAT.posY &&
+			PLAYER.posY + PLAYER.velocityY <= PLAT.posY + PLAT.height
+			) {
+			const overlapX =
+			Math.min(PLAYER.posX + PLAYER.width, PLAT.posX + PLAT.width) -
+				Math.max(PLAYER.posX, PLAT.posX)
+				const overlapY =
+				Math.min(PLAYER.posY + PLAYER.height, PLAT.posY + PLAT.height) -
+				Math.max(PLAYER.posY, PLAT.posY)
+				if (overlapX > overlapY) {
+					if (PLAYER.posY < PLAT.posY) {
+					PLAYER.velocityY = 0
+					MOVESTATS.jumping.action = false
+				} else {
+					PLAYER.posY = PLAT.posY + PLAT.height
+					PLAYER.velocityY = 0
+				}
+			} else {
+				if (PLAYER.posX < PLAT.posX) {
+					PLAYER.posX = PLAT.posX - PLAT.width
+					PLAYER.velocityX = 0
+					MOVEINPUT.right = false
+				} else {
+					PLAYER.posX = PLAT.posX + PLAT.width
+					PLAYER.velocityX = 0
+					MOVEINPUT.left = false
+				}
+			}
+		}
+	})
 	PLAYER.update()
 	if (MOVEINPUT.right) {
 		PLATS.forEach((PLAT) => {
@@ -304,36 +337,6 @@ function animation() {
 			PLAT.posX += VELOCITYX
 		})
 	}
-	PLATS.forEach((PLAT) => {
-		if (
-			PLAYER.posX + PLAYER.width >= PLAT.posX &&
-			PLAYER.posX <= PLAT.posX + PLAT.width &&
-			PLAYER.posY + PLAYER.height + PLAYER.velocityY >= PLAT.posY &&
-			PLAYER.posY + PLAYER.velocityY <= PLAT.posY + PLAT.height
-		) {
-			const overlapX =
-				Math.min(PLAYER.posX + PLAYER.width, PLAT.posX + PLAT.width) -
-				Math.max(PLAYER.posX, PLAT.posX)
-			const overlapY =
-				Math.min(PLAYER.posY + PLAYER.height, PLAT.posY + PLAT.height) -
-				Math.max(PLAYER.posY, PLAT.posY)
-			if (overlapX > overlapY) {
-				if (PLAYER.posY < PLAT.posY) {
-					PLAYER.velocityY = 0
-					MOVESTATS.jumping.action = false
-				} else {
-					PLAYER.posY = PLAT.posY + PLAT.height
-					PLAYER.velocityY = 0
-				}
-			} else {
-				if (PLAYER.posX < PLAT.posX) {
-					PLAYER.velocityX = -1
-				} else {
-					PLAYER.velocityX = +1
-				}
-			}
-		}
-	})
 }
 setPlayerSprites()
 initGame()
