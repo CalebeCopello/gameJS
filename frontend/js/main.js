@@ -145,25 +145,37 @@ class player {
 		this.size = 'small'
 	}
 	draw() {
-		CTX.save()
-		if (!MOVESTATS.facingRight) {
-			CTX.scale(-1, 1)
+		if (this.size == 'small') {
+			CTX.save()
+			if (!MOVESTATS.facingRight) {
+				CTX.scale(-1, 1)
+			}
+			if (MOVESTATS.jumping.action) {
+				this.image = PLAYERIMG.small.jumping[0]
+			} else if (MOVESTATS.moving && !MOVESTATS.jumping.action) {
+				this.image = PLAYERIMG.small.moving[MOVESTATS.frame]
+			} else if (!MOVESTATS.moving && !MOVESTATS.jumping.action) {
+				this.image = PLAYERIMG.small.standing[0]
+			}
+			CTX.drawImage(
+				this.image,
+				MOVESTATS.facingRight ? this.posX : -this.posX - 16 * DISPLAYSIZE,
+				this.posY,
+				16 * DISPLAYSIZE,
+				16 * DISPLAYSIZE
+			)
+			CTX.restore()
+			CTX.strokeStyle = '#f00'
+			CTX.lineWidth = 1
+			CTX.strokeRect(
+				// this.posX,
+				this.posX + 2 * DISPLAYSIZE,
+				this.posY,
+				// 16 * DISPLAYSIZE,
+				16 * DISPLAYSIZE - 4 * DISPLAYSIZE,
+				16 * DISPLAYSIZE
+			)
 		}
-		if (MOVESTATS.jumping.action) {
-			this.image = PLAYERIMG.small.jumping[0]
-		} else if (MOVESTATS.moving && !MOVESTATS.jumping.action) {
-			this.image = PLAYERIMG.small.moving[MOVESTATS.frame]
-		} else if (!MOVESTATS.moving && !MOVESTATS.jumping.action) {
-			this.image = PLAYERIMG.small.standing[0]
-		}
-		CTX.drawImage(
-			this.image,
-			MOVESTATS.facingRight ? this.posX : -this.posX - 16 * DISPLAYSIZE,
-			this.posY,
-			16 * DISPLAYSIZE,
-			16 * DISPLAYSIZE
-		)
-		CTX.restore()
 	}
 	update() {
 		const now = performance.now()
@@ -251,7 +263,8 @@ document.addEventListener('keydown', ({ key }) => {
 			break
 		case 'w':
 		case 'ArrowUp':
-			if (!MOVESTATS.jumping.action) {
+			if (!MOVESTATS.jumping.action && !MOVEINPUT.up) {
+				MOVEINPUT.up = true
 				MOVESTATS.jumping.action = true
 				MOVESTATS.jumping.start = performance.now()
 				MOVESTATS.frame = 0
@@ -275,6 +288,7 @@ document.addEventListener('keyup', ({ key }) => {
 			break
 		case 'w':
 		case 'ArrowUp':
+			MOVEINPUT.up = false
 			break
 		default:
 	}
@@ -296,15 +310,16 @@ function animation() {
 			PLAYER.posX <= PLAT.posX + PLAT.width &&
 			PLAYER.posY + PLAYER.height + PLAYER.velocityY >= PLAT.posY &&
 			PLAYER.posY + PLAYER.velocityY <= PLAT.posY + PLAT.height
-			) {
+		) {
 			const overlapX =
-			Math.min(PLAYER.posX + PLAYER.width, PLAT.posX + PLAT.width) -
+				Math.min(PLAYER.posX + PLAYER.width, PLAT.posX + PLAT.width) -
 				Math.max(PLAYER.posX, PLAT.posX)
-				const overlapY =
+
+			const overlapY =
 				Math.min(PLAYER.posY + PLAYER.height, PLAT.posY + PLAT.height) -
 				Math.max(PLAYER.posY, PLAT.posY)
-				if (overlapX > overlapY) {
-					if (PLAYER.posY < PLAT.posY) {
+			if (overlapX > overlapY) {
+				if (PLAYER.posY < PLAT.posY) {
 					PLAYER.velocityY = 0
 					MOVESTATS.jumping.action = false
 				} else {
@@ -314,11 +329,10 @@ function animation() {
 			} else {
 				if (PLAYER.posX < PLAT.posX) {
 					PLAYER.posX = PLAT.posX - PLAT.width
-					PLAYER.velocityX = 0
 					MOVEINPUT.right = false
+					console.log('hit right')
 				} else {
 					PLAYER.posX = PLAT.posX + PLAT.width
-					PLAYER.velocityX = 0
 					MOVEINPUT.left = false
 				}
 			}
